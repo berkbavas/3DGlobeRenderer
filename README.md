@@ -1,4 +1,4 @@
-# Earth3DOpenGL
+# 3D Earth OpenGL
 Earth planet 3D rendering using `OpenGL` and `Qt`.
 
 ## Build
