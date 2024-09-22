@@ -1,5 +1,5 @@
 # 3D Earth Renderer
-3D Earth Renderer written in ``C++`` using ``OpenGL`` and ``Qt``.
+``3D Earth Renderer`` is written in ``C++`` using ``OpenGL`` and ``Qt``.
 
 ## Build
 1) Install `CMake 3.25.1` or above.
