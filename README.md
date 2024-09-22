@@ -1,5 +1,5 @@
 # 3D Earth Renderer
-3D Earth Renderer is an interactive application developed in C++ that utilizes OpenGL for rendering and Qt for the graphical user interface.
+3D Earth Renderer written in C++ using OpenGL and Qt.
 
 ## Build
 1) Install `CMake 3.25.1` or above.
