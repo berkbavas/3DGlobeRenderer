@@ -1,5 +1,5 @@
-# 3D Earth OpenGL
-Earth planet 3D rendering using `OpenGL` and `Qt`.
+# 3D Earth Renderer
+3D Earth Renderer is an interactive application developed in C++ that utilizes OpenGL for rendering and Qt for the graphical user interface.
 
 ## Build
 1) Install `CMake 3.25.1` or above.
@@ -12,7 +12,3 @@ Earth planet 3D rendering using `OpenGL` and `Qt`.
 8) Run CMake `cmake ..`.
 9) Open `Earth.sln` with `Visual Studio 2022`.
 10) Build & Run with `Release` config.
-
-## Screenshots
-![Screenshot_1](https://github.com/berkbavas/Earth/assets/53399385/a97182b3-c935-4175-9005-8ba352a107e6)
-![Screenshot_2](https://github.com/berkbavas/Earth/assets/53399385/c870a3db-ff94-421e-9324-4fdcdf7d29ed)
