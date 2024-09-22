@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>resources/Shaders/Earth.frag</file>
-        <file>resources/Shaders/Earth.vert</file>
-        <file>resources/Shaders/EarthMousePosition.frag</file>
-        <file>resources/Shaders/EarthMousePosition.vert</file>
-    </qresource>
-</RCC>
