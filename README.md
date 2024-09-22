@@ -11,4 +11,7 @@
 7) Enter the folder `cd Build`.
 8) Run CMake `cmake ..`.
 9) Open `Earth.sln` with `Visual Studio 2022`.
-10) Build & Run with `Release` config.
+10) Build & run with `Release` config.
+
+## Video
+https://github.com/user-attachments/assets/2da072ac-3d94-4146-95f1-7e971ba09b04
