@@ -36,7 +36,7 @@ void Earth::Controller::Init()
 
     mMousePositionFBO = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFBOFormat);
 
-    QImage image("Resources/Textures/world.topo.bathy.200411.3x21600x10800.jpg");
+    QImage image("resources/Textures/world.topo.bathy.200411.3x21600x10800.jpg");
     image = image.mirrored();
     mEarthTexture = new QOpenGLTexture(image);
     mEarthTexture->setWrapMode(QOpenGLTexture::WrapMode::Repeat);
@@ -138,7 +138,7 @@ void Earth::Controller::LoadModels()
 {
     qInfo() << "Loading and creating all models...";
 
-    QDir dir("Resources/Models");
+    QDir dir("resources/Models");
     dir.setNameFilters(QStringList("*.obj"));
     auto files = dir.entryList(QDir::Filter::AllEntries);
 

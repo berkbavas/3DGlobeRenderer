@@ -25,8 +25,8 @@ bool Earth::ShaderManager::Init()
         Shader* shader = new Shader(ShaderType::EarthShader);
         mShaders.insert(shader->GetType(), shader);
 
-        shader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Earth.vert");
-        shader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Earth.frag");
+        shader->AddPath(QOpenGLShader::Vertex, ":/resources/Shaders/Earth.vert");
+        shader->AddPath(QOpenGLShader::Fragment, ":/resources/Shaders/Earth.frag");
 
         if (!shader->Init())
             return false;
@@ -36,8 +36,8 @@ bool Earth::ShaderManager::Init()
         Shader* shader = new Shader(ShaderType::EarthMousePositionShader);
         mShaders.insert(shader->GetType(), shader);
 
-        shader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/EarthMousePosition.vert");
-        shader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/EarthMousePosition.frag");
+        shader->AddPath(QOpenGLShader::Vertex, ":/resources/Shaders/EarthMousePosition.vert");
+        shader->AddPath(QOpenGLShader::Fragment, ":/resources/Shaders/EarthMousePosition.frag");
 
         if (!shader->Init())
             return false;
