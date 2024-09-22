@@ -34,13 +34,13 @@ target_link_libraries(3DEarthRenderer Qt5::Core Qt5::Widgets Qt5::OpenGL ${LIBS}
 add_custom_command(TARGET 3DEarthRenderer
     POST_BUILD COMMAND xcopy /E /Y 
     "\"$(SolutionDir)../Resources\""
-    "\"$(OutDir)resources/*\""
+    "\"$(OutDir)Resources/*\""
 )
 
 add_custom_command(TARGET 3DEarthRenderer
     POST_BUILD COMMAND xcopy /E /Y 
     "\"$(SolutionDir)../Resources\""
-    "\"$(BuildDir)resources/*\""
+    "\"$(BuildDir)Resources/*\""
 )
 
 add_custom_command(TARGET 3DEarthRenderer
