@@ -1,13 +1,13 @@
-#include "Window.h"
+#include "Core/Controller.h"
 
 #include <QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
-    Earth::Window w;
-    w.resize(1600, 900);
-    w.show();
+    EarthRenderer::Controller* controller = new EarthRenderer::Controller;
+
+    controller->Run();
 
     return app.exec();
 }
