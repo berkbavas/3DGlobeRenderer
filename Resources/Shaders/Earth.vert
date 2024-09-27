@@ -7,6 +7,9 @@ uniform mat3 N;  // Normal matrix
 uniform mat4 M;  // Model matrix
 uniform mat4 VP; // View projection matrix
 
+uniform sampler2D heightMap;
+uniform float heightMapMultiplier = 1;
+
 out vec4 fsPosition;
 out vec2 fsTextureCoords;
 out vec3 fsNormal;
@@ -17,5 +20,6 @@ void main()
     fsNormal = N * normal;
     fsTextureCoords = textureCoords;
 
-    gl_Position = VP * fsPosition;
+    float z = fsPosition.z + texture(heightMap, fsTextureCoords).z * heightMapMultiplier;
+    gl_Position = VP * vec4(vec2(fsPosition), z, 1.0);
 }

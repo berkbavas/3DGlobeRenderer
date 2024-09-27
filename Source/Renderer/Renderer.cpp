@@ -2,7 +2,7 @@
 
 #include "Util/Logger.h"
 #include "Util/Math.h"
-#include "Util/Misc.h"
+#include "Util/Util.h"
 
 #include <QOpenGLFramebufferObject>
 
@@ -48,7 +48,11 @@ bool EarthRenderer::Renderer::Initialize()
     mEarth = new Earth(this);
     mEarth->SetPosition(QVector3D(0, 0, 0));
     mEarth->SetScale(1, 1, 1);
-    mEarth->Load("Resources/Models/Earth.obj", "Resources/Textures/world.topo.bathy.200406.3x5400x2700");
+    mEarth->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
+    mEarth->AddTexture(1, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
+    mEarth->Initialize("Resources/Models/Earth.obj");
+
+    LOG_DEBUG("Renderer::Initialize: Application is running...");
 
     return true;
 }
@@ -131,15 +135,17 @@ void EarthRenderer::Renderer::RenderEarth()
     mEarthShader->SetUniformValue("earth.diffuse", mEarth->GetDiffuse());
     mEarthShader->SetUniformValue("earth.specular", mEarth->GetSpecular());
     mEarthShader->SetUniformValue("earth.shininess", mEarth->GetShininess());
+    mEarthShader->SetUniformValue("earth.texture", 0);
     mEarthShader->SetUniformValue("cameraPosition", mCamera->GetPosition());
     mEarthShader->SetUniformValue("sun.direction", mSun->GetDirection());
     mEarthShader->SetUniformValue("sun.color", mSun->GetColor());
     mEarthShader->SetUniformValue("sun.ambient", mSun->GetAmbient());
     mEarthShader->SetUniformValue("sun.diffuse", mSun->GetDiffuse());
     mEarthShader->SetUniformValue("sun.specular", mSun->GetSpecular());
-    mEarth->BindTexture();
+    mEarthShader->SetUniformValue("heightMap", 1);
+    mEarth->BindTextures();
     mEarth->Render();
-    mEarth->ReleaseTexture();
+    mEarth->ReleaseTextures();
     mEarthShader->Release();
 }
 
@@ -149,7 +155,7 @@ void EarthRenderer::Renderer::RenderForMousePosition()
     auto model = mEarth->GetTransformation();
     // We have to scale it little bit in order to be able to rotate the earth
     // while the cursor is not on the earth.
-    model.scale(2.0f);
+    model.scale(1.5f);
 
     mMousePositionFramebuffer->bind();
     glClearColor(0, 0, 0, 0);

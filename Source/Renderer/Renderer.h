@@ -60,8 +60,8 @@ namespace EarthRenderer
         Shader* mMousePositionShader;
 
         Sun* mSun;
-        Earth* mEarth;
         Camera* mCamera;
+        Earth* mEarth;
 
         Mouse mMouse;
         bool mRotateEarth{false};

@@ -7,7 +7,7 @@
 EarthRenderer::Controller::Controller(QObject* parent)
     : QObject(parent)
 {
-    LOG_DEBUG("Controller::Controller");
+    LOG_DEBUG("Application starting...");
 
     mWindow = new Window;
     mRenderer = new Renderer;
@@ -24,7 +24,7 @@ EarthRenderer::Controller::Controller(QObject* parent)
 
 EarthRenderer::Controller::~Controller()
 {
-    LOG_DEBUG("Controller::~Controller");
+    LOG_DEBUG("Application closing...");
 }
 
 void EarthRenderer::Controller::Run()

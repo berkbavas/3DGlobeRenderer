@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-#include "Util/Misc.h"
+#include "Util/Util.h"
 
 #include <QDebug>
 #include <QFile>
@@ -21,7 +21,7 @@ bool EarthRenderer::Shader::Initialize()
 
     for (const auto [shaderType, path] : mPaths)
     {
-        const auto bytes = Misc::GetBytes(path);
+        const auto bytes = Util::GetBytes(path);
         if (!mProgram->addShaderFromSourceCode(shaderType, bytes))
         {
 
