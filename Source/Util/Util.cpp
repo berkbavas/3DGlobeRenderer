@@ -110,7 +110,8 @@ QOpenGLTexture* EarthRenderer::Util::LoadTexture(const QString& path)
         return nullptr;
     }
 
-    QOpenGLTexture* texture = new QOpenGLTexture(image.mirrored());
+    QOpenGLTexture* texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+    texture->setData(image.mirrored());
     texture->setWrapMode(QOpenGLTexture::WrapMode::Repeat);
     texture->setMinMagFilters(QOpenGLTexture::Filter::LinearMipMapLinear, QOpenGLTexture::Filter::Linear);
 

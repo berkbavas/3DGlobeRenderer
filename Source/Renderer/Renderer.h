@@ -2,6 +2,7 @@
 
 #include "Node/Camera.h"
 #include "Node/Earth.h"
+#include "Node/Space.h"
 #include "Node/Sun.h"
 #include "Renderer/Shader.h"
 
@@ -47,6 +48,7 @@ namespace EarthRenderer
         void WheelMoved(QWheelEvent*);
 
       private:
+        void RenderSpace();
         void RenderEarth();
         void RenderForMousePosition();
         void DrawGui();
@@ -58,10 +60,12 @@ namespace EarthRenderer
       private:
         Shader* mEarthShader;
         Shader* mMousePositionShader;
+        Shader* mSpaceShader;
 
         Sun* mSun;
         Camera* mCamera;
         Earth* mEarth;
+        Space* mSpace;
 
         Mouse mMouse;
         bool mRotateEarth{false};

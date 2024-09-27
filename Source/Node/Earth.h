@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Node/ModelData.h"
 #include "Node/Node.h"
-#include "Node/Vertex.h"
+#include "Util/Macros.h"
 
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLTexture>
@@ -16,8 +17,8 @@ namespace EarthRenderer
         explicit Earth(QObject* parent = nullptr);
         ~Earth() = default;
 
+        void LoadModelData(const QString& path);
         void Render();
-        void Initialize(const QString& path);
         void BindTextures();
         void ReleaseTextures();
         void AddTexture(GLuint unit, const QString& path);
@@ -27,10 +28,8 @@ namespace EarthRenderer
         DEFINE_MEMBER(float, Diffuse, 1.0f);
         DEFINE_MEMBER(float, Specular, 0.25f);
         DEFINE_MEMBER(float, Shininess, 4.0f);
-        DEFINE_MEMBER(GLuint, VertexArray, 0);
-        DEFINE_MEMBER(GLuint, VertexBuffer, 0);
 
-        QVector<Vertex> mVertices;
         std::map<GLuint, QOpenGLTexture*> mTextures;
+        ModelData* mModelData;
     };
 }

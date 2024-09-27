@@ -4,5 +4,7 @@
         <file>Resources/Shaders/Earth.vert</file>
         <file>Resources/Shaders/MousePosition.frag</file>
         <file>Resources/Shaders/MousePosition.vert</file>
+        <file>Resources/Shaders/Space.frag</file>
+        <file>Resources/Shaders/Space.vert</file>
     </qresource>
 </RCC>

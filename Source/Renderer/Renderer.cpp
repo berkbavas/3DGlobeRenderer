@@ -27,14 +27,16 @@ bool EarthRenderer::Renderer::Initialize()
     mMousePositionShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/MousePosition.frag");
     mMousePositionShader->Initialize();
 
+    mSpaceShader = new Shader("Space Cube Map Shader");
+    mSpaceShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Space.vert");
+    mSpaceShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Space.frag");
+    mSpaceShader->Initialize();
+
     mMousePositionFramebufferFormat.setSamples(0);
     mMousePositionFramebufferFormat.setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
     mMousePositionFramebufferFormat.setInternalTextureFormat(GL_RGBA32F);
 
     mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
-
-    mMousePositionFramebuffer;
-    QVector4D mMouseWorldPosition;
 
     mSun = new Sun(this);
 
@@ -48,9 +50,13 @@ bool EarthRenderer::Renderer::Initialize()
     mEarth = new Earth(this);
     mEarth->SetPosition(QVector3D(0, 0, 0));
     mEarth->SetScale(1, 1, 1);
+    mEarth->LoadModelData("Resources/Models/Earth.obj");
     mEarth->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
-    mEarth->AddTexture(1, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
-    mEarth->Initialize("Resources/Models/Earth.obj");
+    mEarth->AddTexture(1, "Resources/HeightMaps/gebco_08_rev_elev_21600x10800.png");
+
+    mSpace = new Space(this);
+    mSpace->LoadModelData("Resources/Models/Cube.obj");
+    mSpace->LoadTextures("Resources/Textures", ".jpg");
 
     LOG_DEBUG("Renderer::Initialize: Application is running...");
 
@@ -118,11 +124,22 @@ void EarthRenderer::Renderer::Render(float ifps)
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    RenderSpace();
     RenderEarth();
-    RenderForMousePosition();
-
-    QOpenGLFramebufferObject::bindDefault();
     DrawGui();
+
+    RenderForMousePosition();
+}
+
+void EarthRenderer::Renderer::RenderSpace()
+{
+    mSpaceShader->Bind();
+    mSpaceShader->SetUniformValue("view", mEarth->GetTransformation());
+    mSpaceShader->SetUniformValue("projection", mCamera->GetProjectionMatrix());
+    mSpaceShader->SetUniformValue("skybox", 0);
+    mSpaceShader->SetUniformValue("brightness", mSpace->GetBrightness());
+    mSpace->Render();
+    mSpaceShader->Release();
 }
 
 void EarthRenderer::Renderer::RenderEarth()
@@ -184,6 +201,8 @@ void EarthRenderer::Renderer::DrawGui()
         {
             mEarth->UpdateTransformation();
         }
+
+        ImGui::SliderFloat("Background Brightness##Earth", &mSpace->GetBrightness_NonConst(), 0.0f, 1.0f, "%.2f");
     }
 
     if (!ImGui::CollapsingHeader("Sun"))
