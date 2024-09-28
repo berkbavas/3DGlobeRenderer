@@ -36,12 +36,14 @@ namespace GlobeRenderer
         void Initialize();
 
       private:
+        float GetAdaptiveMultiplier() const;
+
         Renderer* mRenderer;
         Camera* mCamera;
         Globe* mGlobe;
 
         float mCameraTiltSpeed{20.0f};
-        float mCameraDistanceSpeed{10.0f};
+        float mCameraDistanceSpeed{8.0f};
         float mGlobeRotationSpeed{30.0f};
 
         // Camera

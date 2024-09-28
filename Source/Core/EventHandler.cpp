@@ -1,5 +1,6 @@
 #include "EventHandler.h"
 
+#include "Core/Constants.h"
 #include "Renderer/Renderer.h"
 #include "Util/Math.h"
 #include "Util/Util.h"
@@ -96,19 +97,24 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 {
     const auto x = event->pos().x() * mDevicePixelRatio;
     const auto y = event->pos().y() * mDevicePixelRatio;
+    const auto ndx = (x - mMouse.x) / mCamera->GetWidth();
+    const auto ndy = (y - mMouse.y) / mCamera->GetHeight();
+
+    const auto multiplier = GetAdaptiveMultiplier();
 
     if (mPressedButton == Qt::LeftButton)
     {
-        mPhi += 20 * mCamera->GetDistance() * (x - mMouse.x) / mCamera->GetWidth();
-        mTheta += 20 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
+        mPhi += 90 * multiplier * ndx;
+        mTheta += 90 * multiplier * ndy;
     }
     else if (mPressedButton == Qt::MiddleButton)
     {
-        mRoll += 20 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
+        mRoll += 90 * multiplier * ndy;
     }
     else if (mPressedButton == Qt::RightButton)
     {
-        mTiltAngle += 0.05 * (mMouse.y - y);
+
+        mTiltAngle += 90 * multiplier * ndy;
     }
 
     mMouse.x = x;
@@ -117,7 +123,7 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 
 void GlobeRenderer::EventHandler::WheelMoved(QWheelEvent* event)
 {
-    mDistance += 0.2 * Util::Sign(event->angleDelta().y());
+    mDistance += 0.25 * GetAdaptiveMultiplier() * Util::Sign(event->angleDelta().y());
 }
 
 void GlobeRenderer::EventHandler::SetRenderer(Renderer* renderer)
@@ -129,4 +135,9 @@ void GlobeRenderer::EventHandler::Initialize()
 {
     mCamera = mRenderer->GetCamera();
     mGlobe = mRenderer->GetGlobe();
+}
+
+float GlobeRenderer::EventHandler::GetAdaptiveMultiplier() const
+{
+    return 1.0f - qExp(-(mCamera->GetDistance() - GR_MIN_CAM_DISTANCE)) + 0.1;
 }

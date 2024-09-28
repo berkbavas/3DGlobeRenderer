@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+#include "Core/Constants.h"
 #include "Util/Logger.h"
 #include "Util/Math.h"
 #include "Util/Util.h"
@@ -153,9 +154,9 @@ void GlobeRenderer::Renderer::DrawGui()
 
     if (!ImGui::CollapsingHeader("Sun"))
     {
-        ImGui::SliderFloat("Ambient##Sun", &mSun->GetAmbient_NonConst(), 0.0f, 2.0f, "%.3f");
-        ImGui::SliderFloat("Diffuse##Sun", &mSun->GetDiffuse_NonConst(), 0.0f, 2.0f, "%.3f");
-        ImGui::SliderFloat("Specular##Sun", &mSun->GetSpecular_NonConst(), 0.0f, 2.0f, "%.3f");
+        ImGui::SliderFloat("Ambient##Sun", &mSun->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Diffuse##Sun", &mSun->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Specular##Sun", &mSun->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
 
         auto theta = mSun->GetTheta();
         auto phi = mSun->GetPhi();
@@ -166,12 +167,12 @@ void GlobeRenderer::Renderer::DrawGui()
 
     if (!ImGui::CollapsingHeader("Camera"))
     {
-        if (ImGui::SliderFloat("Tilt##Camera", &mCamera->GetTilt_NonConst(), -89.0f, 89.0f, "%.4f"))
+        if (ImGui::SliderFloat("Tilt##Camera", &mCamera->GetTilt_NonConst(), GR_MIN_TILT_ANGLE, GR_MAX_TILT_ANGLE, "%.4f"))
         {
             mCamera->UpdateTransformation();
         }
 
-        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance(), 1.125f, 10.0f, "%.4f"))
+        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance(), GR_MIN_CAM_DISTANCE, GR_MAX_CAM_DISTANCE, "%.4f"))
         {
             mCamera->UpdateTransformation();
         }

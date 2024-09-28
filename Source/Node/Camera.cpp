@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include "Core/Constants.h"
+
 #include <QtMath>
 #include <cmath>
 
@@ -51,7 +53,7 @@ void GlobeRenderer::Camera::AddDistance(float delta)
 {
     float& z = GetPosition()[2];
     z += delta;
-    z = qBound(1.125f, z, 10.0f);
+    z = qBound(GR_MIN_CAM_DISTANCE, z, GR_MAX_CAM_DISTANCE);
 
     UpdateTransformation();
 }
@@ -64,7 +66,7 @@ float& GlobeRenderer::Camera::GetDistance()
 void GlobeRenderer::Camera::AddTilt(float delta)
 {
     mTilt += delta;
-    mTilt = qBound(-89.0f, mTilt, 89.0f);
+    mTilt = qBound(GR_MIN_TILT_ANGLE, mTilt, GR_MAX_TILT_ANGLE);
 
     UpdateTransformation();
 }
