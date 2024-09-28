@@ -1,4 +1,5 @@
-#version 330 core
+#version 450 core
+
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 textureCoords;
@@ -6,6 +7,8 @@ layout(location = 2) in vec2 textureCoords;
 uniform mat3 N;  // Normal matrix
 uniform mat4 M;  // Model matrix
 uniform mat4 VP; // View projection matrix
+
+// uniform sampler2D heightMap;
 
 out vec4 fsPosition;
 out vec2 fsTextureCoords;
@@ -18,4 +21,8 @@ void main()
     fsTextureCoords = textureCoords;
 
     gl_Position = VP * fsPosition;
+
+    // Enable if height mapping is desired
+    //float z = fsPosition.z + 0.025 * texture(heightMap, textureCoords).r;
+    //gl_Position = VP * vec4(fsPosition.xy, z, 1);
 }

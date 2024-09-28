@@ -98,25 +98,3 @@ QVector<GlobeRenderer::Vertex> GlobeRenderer::Util::Parse(const QString& path)
 
     return vertices;
 }
-
-QOpenGLTexture* GlobeRenderer::Util::LoadTexture(const QString& path)
-{
-    LOG_DEBUG("Util::LoadTexture: Loading texture at {}", path.toStdString());
-
-    QImage image = QImage(path);
-
-    if (image.isNull())
-    {
-        LOG_FATAL("Util::LoadTexture: Image could not be loaded.");
-        return nullptr;
-    }
-
-    QOpenGLTexture* texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    texture->setData(image.mirrored());
-    texture->setWrapMode(QOpenGLTexture::WrapMode::Repeat);
-    texture->setMinMagFilters(QOpenGLTexture::Filter::LinearMipMapLinear, QOpenGLTexture::Filter::Linear);
-
-    LOG_DEBUG("Util::LoadTexture: Texture has been loaded.");
-
-    return texture;
-}

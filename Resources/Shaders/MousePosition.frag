@@ -3,7 +3,7 @@
 in vec2 fsTextureCoords;
 in vec4 fsPosition;
 
-layout(location = 0) out vec3 outPosition;
+out vec3 outPosition;
 
 void main()
 {

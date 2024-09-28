@@ -41,17 +41,20 @@ bool GlobeRenderer::Renderer::Initialize()
     mSun = new Sun(this);
 
     mCamera = new Camera(this);
-    mCamera->GetDistance() = 20;
+    mCamera->GetDistance() = 3.5f;
     mCamera->UpdateTransformation();
-    mCamera->SetVerticalFov(80.0f);
+    mCamera->SetVerticalFov(60.0f);
     mCamera->SetZNear(0.1f);
     mCamera->SetZFar(10000.0f);
 
     mGlobe = new Globe(this);
     mGlobe->SetPosition(QVector3D(0, 0, 0));
-    mGlobe->SetScale(1, 1, 1);
-    mGlobe->LoadModelData("Resources/Models/Globe.obj");
-    mGlobe->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
+    mGlobe->AddTexture(0, "Resources/Textures/world.topo.bathy.200411.3x21600x10800.jpg");
+    // mGlobe->AddTexture(1, "Resources/HeightMaps/gebco_08_rev_elev_21600x10800.png");
+
+    mGlobe->Rotate(mCamera->GetRotation() * QVector3D(1, 0, 0), -60);
+    mGlobe->Rotate(mCamera->GetRotation() * QVector3D(0, 1, 0), 60);
+    mGlobe->Rotate(mCamera->GetRotation() * QVector3D(0, 0, 1), 20);
 
     mSpace = new Space(this);
     mSpace->LoadModelData("Resources/Models/Cube.obj");
@@ -105,6 +108,7 @@ void GlobeRenderer::Renderer::RenderGlobe()
     mGlobeShader->SetUniformValue("globe.specular", mGlobe->GetSpecular());
     mGlobeShader->SetUniformValue("globe.shininess", mGlobe->GetShininess());
     mGlobeShader->SetUniformValue("globe.texture", 0);
+    // mGlobeShader->SetUniformValue("heightMap", 1);
     mGlobeShader->SetUniformValue("cameraPosition", mCamera->GetPosition());
     mGlobeShader->SetUniformValue("sun.direction", mSun->GetDirection());
     mGlobeShader->SetUniformValue("sun.color", mSun->GetColor());
@@ -167,7 +171,7 @@ void GlobeRenderer::Renderer::DrawGui()
             mCamera->UpdateTransformation();
         }
 
-        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance(), 10.5f, 50.0f, "%.4f"))
+        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance(), 1.125f, 10.0f, "%.4f"))
         {
             mCamera->UpdateTransformation();
         }

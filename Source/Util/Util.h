@@ -3,7 +3,6 @@
 #include "Node/Vertex.h"
 
 #include <QByteArray>
-#include <QOpenGLTexture>
 #include <QString>
 
 namespace GlobeRenderer
@@ -15,7 +14,6 @@ namespace GlobeRenderer
 
         static QByteArray GetBytes(const QString& path);
         static QVector<Vertex> Parse(const QString& path);
-        static QOpenGLTexture* LoadTexture(const QString& path);
 
         template<typename T>
         static int Sign(T val)

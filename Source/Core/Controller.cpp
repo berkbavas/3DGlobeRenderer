@@ -106,11 +106,6 @@ void GlobeRenderer::Controller::MousePressed(QMouseEvent* event)
 
 void GlobeRenderer::Controller::MouseReleased(QMouseEvent* event)
 {
-    if (ImGui::GetIO().WantCaptureMouse)
-    {
-        return;
-    }
-
     mEventHandler->MouseReleased(event);
 }
 

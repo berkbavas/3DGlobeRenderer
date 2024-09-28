@@ -2,10 +2,10 @@
 
 layout (location = 0) in vec3 position;
 
-out vec3 fsTextureCoords;
-
 uniform mat4 projection;
 uniform mat4 view;
+
+out vec3 fsTextureCoords;
 
 void main()
 {

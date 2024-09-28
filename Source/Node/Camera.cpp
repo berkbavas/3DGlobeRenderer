@@ -47,17 +47,11 @@ QMatrix4x4 GlobeRenderer::Camera::GetProjectionMatrix()
     return projection;
 }
 
-void GlobeRenderer::Camera::Reset()
-{
-    mZoomLevel = 100;
-    mTilt = 0.0f;
-}
-
 void GlobeRenderer::Camera::AddDistance(float delta)
 {
     float& z = GetPosition()[2];
     z += delta;
-    z = qBound(12.5f, z, 50.0f);
+    z = qBound(1.125f, z, 10.0f);
 
     UpdateTransformation();
 }

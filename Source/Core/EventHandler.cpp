@@ -21,7 +21,7 @@ void GlobeRenderer::EventHandler::Update(float ifps)
 
 void GlobeRenderer::EventHandler::UpdateCameraTransformation(float ifps)
 {
-    if (!Util::IsBetween(-0.1f, mDistance, 0.1f))
+    if (!Util::IsBetween(-0.005f, mDistance, 0.005f))
     {
         const auto distance = mCameraDistanceSpeed * mDistance * ifps;
         mDistance -= distance;
@@ -32,7 +32,7 @@ void GlobeRenderer::EventHandler::UpdateCameraTransformation(float ifps)
         mDistance = 0;
     }
 
-    if (!Util::IsBetween(-0.1f, mTiltAngle, 0.1f))
+    if (!Util::IsBetween(-0.005f, mTiltAngle, 0.005f))
     {
         const auto angle = mCameraTiltSpeed * mTiltAngle * ifps;
         mTiltAngle -= angle;
@@ -46,7 +46,7 @@ void GlobeRenderer::EventHandler::UpdateCameraTransformation(float ifps)
 
 void GlobeRenderer::EventHandler::UpdateGlobeTransformation(float ifps)
 {
-    if (!Util::IsBetween(-0.1f, mTheta, 0.1f))
+    if (!Util::IsBetween(-0.005f, mTheta, 0.005f))
     {
         const auto theta = mGlobeRotationSpeed * mTheta * ifps;
         mTheta -= theta;
@@ -57,7 +57,7 @@ void GlobeRenderer::EventHandler::UpdateGlobeTransformation(float ifps)
         mTheta = 0.0f;
     }
 
-    if (!Util::IsBetween(-0.1f, mPhi, 0.1f))
+    if (!Util::IsBetween(-0.005f, mPhi, 0.005f))
     {
         const auto phi = mGlobeRotationSpeed * mPhi * ifps;
         mPhi -= phi;
@@ -68,7 +68,7 @@ void GlobeRenderer::EventHandler::UpdateGlobeTransformation(float ifps)
         mPhi = 0.0f;
     }
 
-    if (!Util::IsBetween(-0.1f, mRoll, 0.1f))
+    if (!Util::IsBetween(-0.005f, mRoll, 0.005f))
     {
         const auto roll = mGlobeRotationSpeed * mRoll * ifps;
         mRoll -= roll;
@@ -99,12 +99,12 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 
     if (mPressedButton == Qt::LeftButton)
     {
-        mPhi += 10 * mCamera->GetDistance() * (x - mMouse.x) / mCamera->GetWidth();
-        mTheta += 10 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
+        mPhi += 20 * mCamera->GetDistance() * (x - mMouse.x) / mCamera->GetWidth();
+        mTheta += 20 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
     }
     else if (mPressedButton == Qt::MiddleButton)
     {
-        mRoll += 180 * (y - mMouse.y) / mCamera->GetHeight();
+        mRoll += 20 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
     }
     else if (mPressedButton == Qt::RightButton)
     {
@@ -117,7 +117,7 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 
 void GlobeRenderer::EventHandler::WheelMoved(QWheelEvent* event)
 {
-    mDistance += Util::Sign(event->angleDelta().y());
+    mDistance += 0.2 * Util::Sign(event->angleDelta().y());
 }
 
 void GlobeRenderer::EventHandler::SetRenderer(Renderer* renderer)

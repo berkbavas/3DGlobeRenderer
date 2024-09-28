@@ -42,7 +42,7 @@ namespace GlobeRenderer
 
         float mCameraTiltSpeed{20.0f};
         float mCameraDistanceSpeed{10.0f};
-        float mGlobeRotationSpeed{10.0f};
+        float mGlobeRotationSpeed{30.0f};
 
         // Camera
         float mTiltAngle{0};
