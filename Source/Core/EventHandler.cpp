@@ -97,6 +97,7 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 {
     const auto x = event->pos().x() * mDevicePixelRatio;
     const auto y = event->pos().y() * mDevicePixelRatio;
+
     const auto ndx = (x - mMouse.x) / mCamera->GetWidth();
     const auto ndy = (y - mMouse.y) / mCamera->GetHeight();
 
@@ -104,17 +105,16 @@ void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 
     if (mPressedButton == Qt::LeftButton)
     {
-        mPhi += 90 * multiplier * ndx;
-        mTheta += 90 * multiplier * ndy;
+        mPhi += 120 * multiplier * ndx;
+        mTheta += 120 * multiplier * ndy;
     }
     else if (mPressedButton == Qt::MiddleButton)
     {
-        mRoll += 90 * multiplier * ndy;
+        mRoll += 180 * ndy;
     }
     else if (mPressedButton == Qt::RightButton)
     {
-
-        mTiltAngle += 90 * multiplier * ndy;
+        mTiltAngle += 60 * ndy;
     }
 
     mMouse.x = x;
