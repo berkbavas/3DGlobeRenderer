@@ -1,6 +1,6 @@
 #version 330 core
 
-struct Earth
+struct Globe
 {
     float ambient;
     float diffuse;
@@ -19,7 +19,7 @@ struct Sun
     float specular;
 };
 
-uniform Earth earth;
+uniform Globe globe;
 uniform Sun sun;
 uniform vec3 cameraPosition;
 
@@ -33,12 +33,10 @@ void main()
 {
     vec3 viewDirection = normalize(cameraPosition - fsPosition.xyz);
 
-    float ambient = sun.ambient * earth.ambient;
-
-    float diffuse = max(dot(fsNormal, sun.direction), 0.0) * sun.diffuse * earth.diffuse;
-
+    float ambient = sun.ambient * globe.ambient;
+    float diffuse = max(dot(fsNormal, sun.direction), 0.0) * sun.diffuse * globe.diffuse;
     vec3 reflection = reflect(sun.direction, fsNormal);
-    float specular = pow(max(dot(viewDirection, reflection), 0.0), earth.shininess) * sun.specular * earth.specular;
+    float specular = pow(max(dot(viewDirection, reflection), 0.0), globe.shininess) * sun.specular * globe.specular;
 
-    outColor = (ambient + diffuse + specular) * sun.color * texture(earth.texture, fsTextureCoords);
+    outColor = (ambient + diffuse + specular) * sun.color * texture(globe.texture, fsTextureCoords);
 }

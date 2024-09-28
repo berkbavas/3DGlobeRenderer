@@ -6,7 +6,7 @@
 #include <QVector3D>
 #include <QtMath>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Sun : public QObject
     {

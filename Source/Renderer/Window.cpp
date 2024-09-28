@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-EarthRenderer::Window::Window(QWindow* parent)
+GlobeRenderer::Window::Window(QWindow* parent)
     : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent)
 
 {
@@ -19,7 +19,7 @@ EarthRenderer::Window::Window(QWindow* parent)
             { update(); });
 }
 
-void EarthRenderer::Window::initializeGL()
+void GlobeRenderer::Window::initializeGL()
 {
     initializeOpenGLFunctions();
 
@@ -31,12 +31,12 @@ void EarthRenderer::Window::initializeGL()
     emit Initialize();
 }
 
-void EarthRenderer::Window::resizeGL(int width, int height)
+void GlobeRenderer::Window::resizeGL(int width, int height)
 {
     emit Resize(width, height);
 }
 
-void EarthRenderer::Window::paintGL()
+void GlobeRenderer::Window::paintGL()
 {
     mCurrentTime = QDateTime::currentMSecsSinceEpoch();
     const float ifps = (mCurrentTime - mPreviousTime) * 0.001f;
@@ -46,32 +46,32 @@ void EarthRenderer::Window::paintGL()
     emit Render(ifps);
 }
 
-void EarthRenderer::Window::keyPressEvent(QKeyEvent* event)
+void GlobeRenderer::Window::keyPressEvent(QKeyEvent* event)
 {
     emit KeyPressed(event);
 }
 
-void EarthRenderer::Window::keyReleaseEvent(QKeyEvent* event)
+void GlobeRenderer::Window::keyReleaseEvent(QKeyEvent* event)
 {
     emit KeyReleased(event);
 }
 
-void EarthRenderer::Window::mousePressEvent(QMouseEvent* event)
+void GlobeRenderer::Window::mousePressEvent(QMouseEvent* event)
 {
     emit MousePressed(event);
 }
 
-void EarthRenderer::Window::mouseReleaseEvent(QMouseEvent* event)
+void GlobeRenderer::Window::mouseReleaseEvent(QMouseEvent* event)
 {
     emit MouseReleased(event);
 }
 
-void EarthRenderer::Window::mouseMoveEvent(QMouseEvent* event)
+void GlobeRenderer::Window::mouseMoveEvent(QMouseEvent* event)
 {
     emit MouseMoved(event);
 }
 
-void EarthRenderer::Window::wheelEvent(QWheelEvent* event)
+void GlobeRenderer::Window::wheelEvent(QWheelEvent* event)
 {
     emit WheelMoved(event);
 }

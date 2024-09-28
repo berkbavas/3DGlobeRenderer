@@ -3,7 +3,7 @@
 #include "Util/Logger.h"
 #include "Util/Util.h"
 
-EarthRenderer::ModelData::ModelData(const QString& path)
+GlobeRenderer::ModelData::ModelData(const QString& path)
 {
     LOG_DEBUG("ModelData::ModelData: Creating model from '{}'", path.toStdString());
 
@@ -41,7 +41,7 @@ EarthRenderer::ModelData::ModelData(const QString& path)
     LOG_DEBUG("ModelData::ModelData: OpenGL stuff has been constructed.");
 }
 
-void EarthRenderer::ModelData::Render()
+void GlobeRenderer::ModelData::Render()
 {
     glBindVertexArray(mVertexArray);
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());

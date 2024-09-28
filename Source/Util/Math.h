@@ -4,7 +4,7 @@
 #include <QQuaternion>
 #include <QString>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Math
     {

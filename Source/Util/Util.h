@@ -6,7 +6,7 @@
 #include <QOpenGLTexture>
 #include <QString>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Util
     {

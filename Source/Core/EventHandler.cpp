@@ -4,130 +4,139 @@
 #include "Util/Math.h"
 #include "Util/Util.h"
 
+#include <QMatrix4x4>
+#include <QVector3D>
 #include <QtMath>
 
-EarthRenderer::EventHandler::EventHandler(QObject* parent)
+GlobeRenderer::EventHandler::EventHandler(QObject* parent)
     : QObject(parent)
 {
 }
-void EarthRenderer::EventHandler::Update(float ifps)
+
+void GlobeRenderer::EventHandler::Update(float ifps)
 {
     UpdateCameraTransformation(ifps);
-    UpdateEarthTransformation(ifps);
+    UpdateGlobeTransformation(ifps);
 }
 
-void EarthRenderer::EventHandler::DrawGui()
+void GlobeRenderer::EventHandler::UpdateCameraTransformation(float ifps)
+{
+    if (!Util::IsBetween(-0.1f, mDistance, 0.1f))
+    {
+        const auto distance = mCameraDistanceSpeed * mDistance * ifps;
+        mDistance -= distance;
+        mCamera->AddDistance(distance);
+    }
+    else
+    {
+        mDistance = 0;
+    }
+
+    if (!Util::IsBetween(-0.1f, mTiltAngle, 0.1f))
+    {
+        const auto angle = mCameraTiltSpeed * mTiltAngle * ifps;
+        mTiltAngle -= angle;
+        mCamera->AddTilt(angle);
+    }
+    else
+    {
+        mTiltAngle = 0;
+    }
+}
+
+void GlobeRenderer::EventHandler::UpdateGlobeTransformation(float ifps)
+{
+    if (!Util::IsBetween(-0.1f, mTheta, 0.1f))
+    {
+        const auto theta = mGlobeRotationSpeed * mTheta * ifps;
+        mTheta -= theta;
+        mGlobe->Rotate(mCamera->GetRotation() * QVector3D(1, 0, 0), theta);
+    }
+    else
+    {
+        mTheta = 0.0f;
+    }
+
+    if (!Util::IsBetween(-0.1f, mPhi, 0.1f))
+    {
+        const auto phi = mGlobeRotationSpeed * mPhi * ifps;
+        mPhi -= phi;
+        mGlobe->Rotate(mCamera->GetRotation() * QVector3D(0, 1, 0), phi);
+    }
+    else
+    {
+        mPhi = 0.0f;
+    }
+
+    if (!Util::IsBetween(-0.1f, mRoll, 0.1f))
+    {
+        const auto roll = mGlobeRotationSpeed * mRoll * ifps;
+        mRoll -= roll;
+        mGlobe->Rotate(mCamera->GetRotation() * QVector3D(0, 0, 1), roll);
+    }
+    else
+    {
+        mRoll = 0.0f;
+    }
+}
+
+void GlobeRenderer::EventHandler::DrawGui()
 {
     if (!ImGui::CollapsingHeader("Action Speed"))
     {
         ImGui::SliderFloat("Camera Tilt Speed", &mCameraTiltSpeed, 1.0f, 50.0f, "%.2f");
         ImGui::SliderFloat("Camera Distance Speed", &mCameraDistanceSpeed, 1.0f, 50.0f, "%.2f");
-        ImGui::SliderFloat("Earth Rotation Speed", &mEarthRotationSpeed, 1.0f, 50.0f, "%.2f");
+        ImGui::SliderFloat("Globe Rotation Speed", &mGlobeRotationSpeed, 1.0f, 50.0f, "%.2f");
     }
 }
 
-void EarthRenderer::EventHandler::UpdateCameraTransformation(float ifps)
+void GlobeRenderer::EventHandler::MousePressed(QMouseEvent* event)
 {
-    if (!Util::IsBetween(-0.1f, mDistanceToBeConsumed, 0.1f))
-    {
-        const auto distance = mCameraDistanceSpeed * mDistanceToBeConsumed * ifps;
-        mDistanceToBeConsumed -= distance;
-        mCamera->AddDistance(distance);
-    }
-    else
-    {
-        mDistanceToBeConsumed = 0;
-    }
-
-    if (!Util::IsBetween(-0.1f, mTiltAngleToBeConsumed, 0.1f))
-    {
-        const auto angle = mCameraTiltSpeed * mTiltAngleToBeConsumed * ifps;
-        mTiltAngleToBeConsumed -= angle;
-        mCamera->AddTilt(angle);
-    }
-    else
-    {
-        mTiltAngleToBeConsumed = 0;
-    }
-}
-
-void EarthRenderer::EventHandler::UpdateEarthTransformation(float ifps)
-{
-    if (!Util::IsBetween(-0.1f, mEarthRotationAngleToBeConsumed, 0.1f))
-    {
-        const auto angle = mEarthRotationSpeed * mEarthRotationAngleToBeConsumed * ifps;
-        mEarthRotationAngleToBeConsumed -= angle;
-        mEarth->Rotate(mRotationAxis, angle);
-    }
-}
-
-void EarthRenderer::EventHandler::MousePressed(QMouseEvent* event)
-{
-    const auto x = event->pos().x() * mDevicePixelRatio;
-    const auto y = event->pos().y() * mDevicePixelRatio;
-
+    mMouse.x = event->pos().x() * mDevicePixelRatio;
+    mMouse.y = event->pos().y() * mDevicePixelRatio;
     mPressedButton = event->button();
-
-    if (mPressedButton == Qt::LeftButton)
-    {
-        mMouseEarthPosition = mRenderer->GetMouseWorldPosition(x, y);
-        mEarthRotationAngleToBeConsumed = 0;
-    }
-
-    if (mPressedButton == Qt::RightButton)
-    {
-        mMouse.y = event->pos().y();
-    }
 }
 
-void EarthRenderer::EventHandler::MouseReleased(QMouseEvent* event)
+void GlobeRenderer::EventHandler::MouseReleased(QMouseEvent* event)
 {
     mPressedButton = Qt::NoButton;
 }
 
-void EarthRenderer::EventHandler::MouseMoved(QMouseEvent* event)
+void GlobeRenderer::EventHandler::MouseMoved(QMouseEvent* event)
 {
-    if (ImGui::GetIO().WantCaptureMouse)
-    {
-        return;
-    }
-
     const auto x = event->pos().x() * mDevicePixelRatio;
     const auto y = event->pos().y() * mDevicePixelRatio;
 
     if (mPressedButton == Qt::LeftButton)
     {
-
-        QVector3D p0 = mMouseEarthPosition;
-        QVector3D p1 = mRenderer->GetMouseWorldPosition(x, y);
-        QVector3D v0 = p0.normalized();
-        QVector3D v1 = p1.normalized();
-
-        mRotationAxis = QVector3D::crossProduct(p0, p1);
-        mEarthRotationAngleToBeConsumed += Math::AngleBetween(p0, p1);
-
-        mMouseEarthPosition = p1;
+        mPhi += 10 * mCamera->GetDistance() * (x - mMouse.x) / mCamera->GetWidth();
+        mTheta += 10 * mCamera->GetDistance() * (y - mMouse.y) / mCamera->GetHeight();
     }
-
-    if (mPressedButton == Qt::RightButton)
+    else if (mPressedButton == Qt::MiddleButton)
     {
-        mTiltAngleToBeConsumed += 0.05 * (mMouse.y - y);
-        mMouse.y = y;
+        mRoll += 180 * (y - mMouse.y) / mCamera->GetHeight();
     }
+    else if (mPressedButton == Qt::RightButton)
+    {
+        mTiltAngle += 0.05 * (mMouse.y - y);
+    }
+
+    mMouse.x = x;
+    mMouse.y = y;
 }
 
-void EarthRenderer::EventHandler::WheelMoved(QWheelEvent* event)
+void GlobeRenderer::EventHandler::WheelMoved(QWheelEvent* event)
 {
-    mDistanceToBeConsumed += Util::Sign(event->angleDelta().y());
+    mDistance += Util::Sign(event->angleDelta().y());
 }
 
-void EarthRenderer::EventHandler::SetRenderer(Renderer* renderer)
+void GlobeRenderer::EventHandler::SetRenderer(Renderer* renderer)
 {
     mRenderer = renderer;
 }
 
-void EarthRenderer::EventHandler::Initialize()
+void GlobeRenderer::EventHandler::Initialize()
 {
     mCamera = mRenderer->GetCamera();
-    mEarth = mRenderer->GetEarth();
+    mGlobe = mRenderer->GetGlobe();
 }

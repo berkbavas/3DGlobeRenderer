@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
-    EarthRenderer::Controller* controller = new EarthRenderer::Controller;
+    GlobeRenderer::Controller* controller = new GlobeRenderer::Controller;
 
     controller->Run();
 

@@ -5,18 +5,18 @@
 #include <QImage>
 #include <QString>
 
-EarthRenderer::Space::Space(QObject* parent)
+GlobeRenderer::Space::Space(QObject* parent)
     : QObject(nullptr)
 {
     initializeOpenGLFunctions();
 }
 
-void EarthRenderer::Space::LoadModelData(const QString& path)
+void GlobeRenderer::Space::LoadModelData(const QString& path)
 {
     mModelData = new ModelData(path);
 }
 
-void EarthRenderer::Space::LoadTextures(const QString& folder, const QString& extension)
+void GlobeRenderer::Space::LoadTextures(const QString& folder, const QString& extension)
 {
     glGenTextures(1, &mTextureId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureId);
@@ -60,7 +60,7 @@ void EarthRenderer::Space::LoadTextures(const QString& folder, const QString& ex
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void EarthRenderer::Space::Render()
+void GlobeRenderer::Space::Render()
 {
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);

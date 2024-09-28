@@ -9,22 +9,22 @@
 #include <QTextStream>
 #include <QtMath>
 
-QQuaternion EarthRenderer::Math::RotateX(float angleRadians)
+QQuaternion GlobeRenderer::Math::RotateX(float angleRadians)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), qRadiansToDegrees(angleRadians));
 }
 
-QQuaternion EarthRenderer::Math::RotateY(float angleRadians)
+QQuaternion GlobeRenderer::Math::RotateY(float angleRadians)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), qRadiansToDegrees(angleRadians));
 }
 
-QQuaternion EarthRenderer::Math::RotateZ(float angleRadians)
+QQuaternion GlobeRenderer::Math::RotateZ(float angleRadians)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(0, 0, 1), qRadiansToDegrees(angleRadians));
 }
 
-QQuaternion EarthRenderer::Math::Invert(const QQuaternion& rotation)
+QQuaternion GlobeRenderer::Math::Invert(const QQuaternion& rotation)
 {
     float yaw, pitch, roll;
     GetEulerDegrees(rotation, yaw, pitch, roll);
@@ -35,7 +35,7 @@ QQuaternion EarthRenderer::Math::Invert(const QQuaternion& rotation)
     return r;
 }
 
-float EarthRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2, const QVector3D& left)
+float GlobeRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2, const QVector3D& left)
 {
     QVector3D u1 = v1.normalized();
     QVector3D u2 = v2.normalized();
@@ -66,7 +66,7 @@ float EarthRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2
     }
 }
 
-float EarthRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2)
+float GlobeRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2)
 {
     QVector3D u1 = v1.normalized();
     QVector3D u2 = v2.normalized();
@@ -87,7 +87,7 @@ float EarthRenderer::Math::AngleBetween(const QVector3D& v1, const QVector3D& v2
     }
 }
 
-void EarthRenderer::Math::GetEulerDegrees(const QQuaternion& rotation, float& yaw, float& pitch, float& roll)
+void GlobeRenderer::Math::GetEulerDegrees(const QQuaternion& rotation, float& yaw, float& pitch, float& roll)
 {
     QVector3D zAxis = rotation * QVector3D(0, 0, -1);
     float x = zAxis.x();
@@ -106,7 +106,7 @@ void EarthRenderer::Math::GetEulerDegrees(const QQuaternion& rotation, float& ya
                      QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), pitch) * //
                      QVector3D(0, 0, -1);
 
-    roll = EarthRenderer::Math::AngleBetween(xAxis, xAxisProj, left);
+    roll = GlobeRenderer::Math::AngleBetween(xAxis, xAxisProj, left);
 
     if (yaw < 0.0f)
     {
@@ -114,14 +114,14 @@ void EarthRenderer::Math::GetEulerDegrees(const QQuaternion& rotation, float& ya
     }
 }
 
-QQuaternion EarthRenderer::Math::ConstructFromEulerDegrees(float yaw, float pitch, float roll)
+QQuaternion GlobeRenderer::Math::ConstructFromEulerDegrees(float yaw, float pitch, float roll)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), yaw) *
            QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), pitch) *
            QQuaternion::fromAxisAndAngle(QVector3D(0, 0, -1), roll);
 }
 
-QVector3D EarthRenderer::Math::ConstructFromLatLon(float lat, float lon)
+QVector3D GlobeRenderer::Math::ConstructFromLatLon(float lat, float lon)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), lon) *
            QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), lat) *

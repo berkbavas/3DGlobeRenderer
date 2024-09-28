@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QOpenGLFunctions>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class EventHandler;
     class Renderer;

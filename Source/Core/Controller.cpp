@@ -5,7 +5,7 @@
 #include "Renderer/Window.h"
 #include "Util/Logger.h"
 
-EarthRenderer::Controller::Controller(QObject* parent)
+GlobeRenderer::Controller::Controller(QObject* parent)
     : QObject(parent)
 {
     LOG_DEBUG("Application starting...");
@@ -15,28 +15,28 @@ EarthRenderer::Controller::Controller(QObject* parent)
     mEventHandler = new EventHandler(this);
     mEventHandler->SetRenderer(mRenderer);
 
-    connect(mWindow, &EarthRenderer::Window::Initialize, this, &EarthRenderer::Controller::Initialize);
-    connect(mWindow, &EarthRenderer::Window::Update, this, &EarthRenderer::Controller::Update);
-    connect(mWindow, &EarthRenderer::Window::Render, this, &EarthRenderer::Controller::Render);
-    connect(mWindow, &EarthRenderer::Window::Resize, this, &EarthRenderer::Controller::Resize);
-    connect(mWindow, &EarthRenderer::Window::MousePressed, this, &EarthRenderer::Controller::MousePressed);
-    connect(mWindow, &EarthRenderer::Window::MouseReleased, this, &EarthRenderer::Controller::MouseReleased);
-    connect(mWindow, &EarthRenderer::Window::MouseMoved, this, &EarthRenderer::Controller::MouseMoved);
-    connect(mWindow, &EarthRenderer::Window::WheelMoved, this, &EarthRenderer::Controller::WheelMoved);
+    connect(mWindow, &GlobeRenderer::Window::Initialize, this, &GlobeRenderer::Controller::Initialize);
+    connect(mWindow, &GlobeRenderer::Window::Update, this, &GlobeRenderer::Controller::Update);
+    connect(mWindow, &GlobeRenderer::Window::Render, this, &GlobeRenderer::Controller::Render);
+    connect(mWindow, &GlobeRenderer::Window::Resize, this, &GlobeRenderer::Controller::Resize);
+    connect(mWindow, &GlobeRenderer::Window::MousePressed, this, &GlobeRenderer::Controller::MousePressed);
+    connect(mWindow, &GlobeRenderer::Window::MouseReleased, this, &GlobeRenderer::Controller::MouseReleased);
+    connect(mWindow, &GlobeRenderer::Window::MouseMoved, this, &GlobeRenderer::Controller::MouseMoved);
+    connect(mWindow, &GlobeRenderer::Window::WheelMoved, this, &GlobeRenderer::Controller::WheelMoved);
 }
 
-EarthRenderer::Controller::~Controller()
+GlobeRenderer::Controller::~Controller()
 {
     LOG_DEBUG("Application closing...");
 }
 
-void EarthRenderer::Controller::Run()
+void GlobeRenderer::Controller::Run()
 {
     mWindow->resize(1600, 900);
     mWindow->show();
 }
 
-void EarthRenderer::Controller::Initialize()
+void GlobeRenderer::Controller::Initialize()
 {
     initializeOpenGLFunctions();
 
@@ -44,14 +44,14 @@ void EarthRenderer::Controller::Initialize()
     mEventHandler->Initialize();
 }
 
-void EarthRenderer::Controller::Update(float ifps)
+void GlobeRenderer::Controller::Update(float ifps)
 {
     mDevicePixelRatio = mWindow->devicePixelRatio();
     mEventHandler->SetDevicePixelRatio(mDevicePixelRatio);
     mEventHandler->Update(ifps);
 }
 
-void EarthRenderer::Controller::Render(float ifps)
+void GlobeRenderer::Controller::Render(float ifps)
 {
     mWidth = mWindow->width() * mDevicePixelRatio;
     mHeight = mWindow->height() * mDevicePixelRatio;
@@ -75,15 +75,15 @@ void EarthRenderer::Controller::Render(float ifps)
     QtImGui::render();
 }
 
-void EarthRenderer::Controller::KeyPressed(QKeyEvent* event)
+void GlobeRenderer::Controller::KeyPressed(QKeyEvent* event)
 {
 }
 
-void EarthRenderer::Controller::KeyReleased(QKeyEvent* event)
+void GlobeRenderer::Controller::KeyReleased(QKeyEvent* event)
 {
 }
 
-void EarthRenderer::Controller::Resize(int width, int height)
+void GlobeRenderer::Controller::Resize(int width, int height)
 {
     mWidth = width * mDevicePixelRatio;
     mHeight = height * mDevicePixelRatio;
@@ -94,22 +94,42 @@ void EarthRenderer::Controller::Resize(int width, int height)
     mWindow->doneCurrent();
 }
 
-void EarthRenderer::Controller::MousePressed(QMouseEvent* event)
+void GlobeRenderer::Controller::MousePressed(QMouseEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mEventHandler->MousePressed(event);
 }
 
-void EarthRenderer::Controller::MouseReleased(QMouseEvent* event)
+void GlobeRenderer::Controller::MouseReleased(QMouseEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mEventHandler->MouseReleased(event);
 }
 
-void EarthRenderer::Controller::MouseMoved(QMouseEvent* event)
+void GlobeRenderer::Controller::MouseMoved(QMouseEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mEventHandler->MouseMoved(event);
 }
 
-void EarthRenderer::Controller::WheelMoved(QWheelEvent* event)
+void GlobeRenderer::Controller::WheelMoved(QWheelEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mEventHandler->WheelMoved(event);
 }

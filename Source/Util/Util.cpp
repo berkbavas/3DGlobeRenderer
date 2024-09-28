@@ -8,7 +8,7 @@
 #include <QVector2D>
 #include <QVector3D>
 
-QByteArray EarthRenderer::Util::GetBytes(const QString& path)
+QByteArray GlobeRenderer::Util::GetBytes(const QString& path)
 {
     QFile file(path);
 
@@ -23,7 +23,7 @@ QByteArray EarthRenderer::Util::GetBytes(const QString& path)
     }
 }
 
-QVector<EarthRenderer::Vertex> EarthRenderer::Util::Parse(const QString& path)
+QVector<GlobeRenderer::Vertex> GlobeRenderer::Util::Parse(const QString& path)
 {
     LOG_DEBUG("Util::Parse: Parsing 3D model...");
 
@@ -33,7 +33,7 @@ QVector<EarthRenderer::Vertex> EarthRenderer::Util::Parse(const QString& path)
     {
         file.close();
         LOG_FATAL("Util::Parse: '{:}' could not be opened.", file.fileName().toStdString());
-        return QVector<EarthRenderer::Vertex>();
+        return QVector<GlobeRenderer::Vertex>();
     }
 
     QVector<Vertex> vertices;
@@ -99,7 +99,7 @@ QVector<EarthRenderer::Vertex> EarthRenderer::Util::Parse(const QString& path)
     return vertices;
 }
 
-QOpenGLTexture* EarthRenderer::Util::LoadTexture(const QString& path)
+QOpenGLTexture* GlobeRenderer::Util::LoadTexture(const QString& path)
 {
     LOG_DEBUG("Util::LoadTexture: Loading texture at {}", path.toStdString());
 

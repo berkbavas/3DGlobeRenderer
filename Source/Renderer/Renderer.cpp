@@ -6,21 +6,21 @@
 
 #include <QOpenGLFramebufferObject>
 
-EarthRenderer::Renderer::Renderer(QObject* parent)
+GlobeRenderer::Renderer::Renderer(QObject* parent)
     : QObject(parent)
 {
 }
 
-bool EarthRenderer::Renderer::Initialize()
+bool GlobeRenderer::Renderer::Initialize()
 {
     initializeOpenGLFunctions();
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
 
-    mEarthShader = new Shader("Earth Shader");
-    mEarthShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Earth.vert");
-    mEarthShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Earth.frag");
-    mEarthShader->Initialize();
+    mGlobeShader = new Shader("Globe Shader");
+    mGlobeShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Globe.vert");
+    mGlobeShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Globe.frag");
+    mGlobeShader->Initialize();
 
     mMousePositionShader = new Shader("Mouse Position Shader");
     mMousePositionShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/MousePosition.vert");
@@ -47,12 +47,12 @@ bool EarthRenderer::Renderer::Initialize()
     mCamera->SetZNear(0.1f);
     mCamera->SetZFar(10000.0f);
 
-    mEarth = new Earth(this);
-    mEarth->SetPosition(QVector3D(0, 0, 0));
-    mEarth->SetScale(1, 1, 1);
-    mEarth->LoadModelData("Resources/Models/Earth.obj");
-    mEarth->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
-    mEarth->AddTexture(1, "Resources/HeightMaps/gebco_08_rev_elev_21600x10800.png");
+    mGlobe = new Globe(this);
+    mGlobe->SetPosition(QVector3D(0, 0, 0));
+    mGlobe->SetScale(1, 1, 1);
+    mGlobe->LoadModelData("Resources/Models/Globe.obj");
+    mGlobe->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
+    // mGlobe->AddTexture(1, "Resources/HeightMaps/gebco_08_rev_elev_21600x10800.png");
 
     mSpace = new Space(this);
     mSpace->LoadModelData("Resources/Models/Cube.obj");
@@ -63,7 +63,7 @@ bool EarthRenderer::Renderer::Initialize()
     return true;
 }
 
-QVector3D EarthRenderer::Renderer::GetMouseWorldPosition(int x, int y)
+QVector3D GlobeRenderer::Renderer::GetMouseWorldPosition(int x, int y)
 {
     QVector3D position;
     mMousePositionFramebuffer->bind();
@@ -72,7 +72,7 @@ QVector3D EarthRenderer::Renderer::GetMouseWorldPosition(int x, int y)
     return position;
 }
 
-void EarthRenderer::Renderer::Render(float ifps)
+void GlobeRenderer::Renderer::Render(float ifps)
 {
     QOpenGLFramebufferObject::bindDefault();
     glViewport(0, 0, mWidth, mHeight);
@@ -80,14 +80,14 @@ void EarthRenderer::Renderer::Render(float ifps)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     RenderSpace();
-    RenderEarth();
+    RenderGlobe();
     RenderForMousePosition();
 }
 
-void EarthRenderer::Renderer::RenderSpace()
+void GlobeRenderer::Renderer::RenderSpace()
 {
     mSpaceShader->Bind();
-    mSpaceShader->SetUniformValue("view", mEarth->GetTransformation());
+    mSpaceShader->SetUniformValue("view", mGlobe->GetTransformation());
     mSpaceShader->SetUniformValue("projection", mCamera->GetProjectionMatrix());
     mSpaceShader->SetUniformValue("skybox", 0);
     mSpaceShader->SetUniformValue("brightness", mSpace->GetBrightness());
@@ -95,64 +95,58 @@ void EarthRenderer::Renderer::RenderSpace()
     mSpaceShader->Release();
 }
 
-void EarthRenderer::Renderer::RenderEarth()
+void GlobeRenderer::Renderer::RenderGlobe()
 {
-    mEarthShader->Bind();
-    mEarthShader->SetUniformValue("M", mEarth->GetTransformation());
-    mEarthShader->SetUniformValue("N", mEarth->GetTransformation().normalMatrix());
-    mEarthShader->SetUniformValue("VP", mCamera->GetViewProjectionMatrix());
-    mEarthShader->SetUniformValue("earth.ambient", mEarth->GetAmbient());
-    mEarthShader->SetUniformValue("earth.diffuse", mEarth->GetDiffuse());
-    mEarthShader->SetUniformValue("earth.specular", mEarth->GetSpecular());
-    mEarthShader->SetUniformValue("earth.shininess", mEarth->GetShininess());
-    mEarthShader->SetUniformValue("earth.texture", 0);
-    mEarthShader->SetUniformValue("cameraPosition", mCamera->GetPosition());
-    mEarthShader->SetUniformValue("sun.direction", mSun->GetDirection());
-    mEarthShader->SetUniformValue("sun.color", mSun->GetColor());
-    mEarthShader->SetUniformValue("sun.ambient", mSun->GetAmbient());
-    mEarthShader->SetUniformValue("sun.diffuse", mSun->GetDiffuse());
-    mEarthShader->SetUniformValue("sun.specular", mSun->GetSpecular());
-    mEarthShader->SetUniformValue("heightMap", 1);
-    mEarth->BindTextures();
-    mEarth->Render();
-    mEarth->ReleaseTextures();
-    mEarthShader->Release();
+    mGlobeShader->Bind();
+    mGlobeShader->SetUniformValue("M", mGlobe->GetTransformation());
+    mGlobeShader->SetUniformValue("N", mGlobe->GetTransformation().normalMatrix());
+    mGlobeShader->SetUniformValue("VP", mCamera->GetViewProjectionMatrix());
+    mGlobeShader->SetUniformValue("globe.ambient", mGlobe->GetAmbient());
+    mGlobeShader->SetUniformValue("globe.diffuse", mGlobe->GetDiffuse());
+    mGlobeShader->SetUniformValue("globe.specular", mGlobe->GetSpecular());
+    mGlobeShader->SetUniformValue("globe.shininess", mGlobe->GetShininess());
+    mGlobeShader->SetUniformValue("globe.texture", 0);
+    mGlobeShader->SetUniformValue("cameraPosition", mCamera->GetPosition());
+    mGlobeShader->SetUniformValue("sun.direction", mSun->GetDirection());
+    mGlobeShader->SetUniformValue("sun.color", mSun->GetColor());
+    mGlobeShader->SetUniformValue("sun.ambient", mSun->GetAmbient());
+    mGlobeShader->SetUniformValue("sun.diffuse", mSun->GetDiffuse());
+    mGlobeShader->SetUniformValue("sun.specular", mSun->GetSpecular());
+    // mGlobeShader->SetUniformValue("heightMap", 1);
+    mGlobe->BindTextures();
+    mGlobe->Render();
+    mGlobe->ReleaseTextures();
+    mGlobeShader->Release();
 }
 
-void EarthRenderer::Renderer::RenderForMousePosition()
+void GlobeRenderer::Renderer::RenderForMousePosition()
 {
-    const auto& vp = mCamera->GetViewProjectionMatrix();
-    auto model = mEarth->GetTransformation();
-
-    // We have to scale it little bit in order to be able to rotate the earth
-    // while the cursor is not on the earth.
-    model.scale(2.0f);
-
     mMousePositionFramebuffer->bind();
     glViewport(0, 0, mWidth, mHeight);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mMousePositionShader->Bind();
-    mMousePositionShader->SetUniformValue("MVP", vp * model);
-    mEarth->Render();
+    mMousePositionShader->SetUniformValue("MVP", mCamera->GetViewProjectionMatrix() * mGlobe->GetTransformation());
+    mGlobe->Render();
     mMousePositionShader->Release();
     mMousePositionFramebuffer->release();
 }
-void EarthRenderer::Renderer::DrawGui()
-{
-    if (!ImGui::CollapsingHeader("Earth"))
-    {
-        ImGui::SliderFloat("Ambient##Earth", &mEarth->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
-        ImGui::SliderFloat("Diffuse##Earth", &mEarth->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
-        ImGui::SliderFloat("Specular##Earth", &mEarth->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
-        ImGui::SliderFloat("Shininess##Earth", &mEarth->GetShininess_NonConst(), 1.0f, 64.0f, "%.3f");
 
-        if (ImGui::SliderFloat("Scale##Earth", &(mEarth->GetScale()[2]), 1.0f, 10.0f, "%.3f"))
+void GlobeRenderer::Renderer::DrawGui()
+{
+    if (!ImGui::CollapsingHeader("Globe"))
+    {
+        ImGui::SliderFloat("Ambient##Globe", &mGlobe->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Diffuse##Globe", &mGlobe->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Specular##Globe", &mGlobe->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Shininess##Globe", &mGlobe->GetShininess_NonConst(), 1.0f, 64.0f, "%.3f");
+
+        if (ImGui::SliderFloat("Scale##Globe", &(mGlobe->GetScale()[2]), 1.0f, 10.0f, "%.3f"))
         {
-            mEarth->UpdateTransformation();
+            mGlobe->UpdateTransformation();
         }
 
-        ImGui::SliderFloat("Background Brightness##Earth", &mSpace->GetBrightness_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Background Brightness##Globe", &mSpace->GetBrightness_NonConst(), 0.0f, 1.0f, "%.3f");
     }
 
     if (!ImGui::CollapsingHeader("Sun"))
@@ -185,7 +179,7 @@ void EarthRenderer::Renderer::DrawGui()
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
-void EarthRenderer::Renderer::Resize(int width, int height)
+void GlobeRenderer::Renderer::Resize(int width, int height)
 {
     mWidth = width;
     mHeight = height;
@@ -203,12 +197,12 @@ void EarthRenderer::Renderer::Resize(int width, int height)
     mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
 }
 
-EarthRenderer::Camera* EarthRenderer::Renderer::GetCamera()
+GlobeRenderer::Camera* GlobeRenderer::Renderer::GetCamera()
 {
     return mCamera;
 }
 
-EarthRenderer::Earth* EarthRenderer::Renderer::GetEarth()
+GlobeRenderer::Globe* GlobeRenderer::Renderer::GetGlobe()
 {
-    return mEarth;
+    return mGlobe;
 }

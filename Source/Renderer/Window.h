@@ -7,7 +7,7 @@
 #include <QtImGui.h>
 #include <imgui.h>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Window : public QOpenGLWindow, protected QOpenGLExtraFunctions
     {

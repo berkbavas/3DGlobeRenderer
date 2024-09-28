@@ -9,13 +9,13 @@
 #include <QVector>
 #include <map>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
-    class Earth : public Node, protected QOpenGLExtraFunctions
+    class Globe : public Node, protected QOpenGLExtraFunctions
     {
       public:
-        explicit Earth(QObject* parent = nullptr);
-        ~Earth() = default;
+        explicit Globe(QObject* parent = nullptr);
+        ~Globe() = default;
 
         void LoadModelData(const QString& path);
         void Render();

@@ -9,7 +9,7 @@
 #include <QtImGui.h>
 #include <imgui.h>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Node : public QObject
     {

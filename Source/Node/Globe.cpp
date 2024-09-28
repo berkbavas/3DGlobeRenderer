@@ -1,27 +1,27 @@
-#include "Earth.h"
+#include "Globe.h"
 
 #include "Util/Logger.h"
 #include "Util/Util.h"
 
-EarthRenderer::Earth::Earth(QObject* parent)
+GlobeRenderer::Globe::Globe(QObject* parent)
     : Node(parent)
 
 {
 }
 
-void EarthRenderer::Earth::LoadModelData(const QString& path)
+void GlobeRenderer::Globe::LoadModelData(const QString& path)
 {
     initializeOpenGLFunctions();
 
     mModelData = new ModelData(path);
 }
 
-void EarthRenderer::Earth::Render()
+void GlobeRenderer::Globe::Render()
 {
     mModelData->Render();
 }
 
-void EarthRenderer::Earth::BindTextures()
+void GlobeRenderer::Globe::BindTextures()
 {
     for (const auto& [unit, texture] : mTextures)
     {
@@ -29,12 +29,12 @@ void EarthRenderer::Earth::BindTextures()
         glBindTexture(GL_TEXTURE_2D, texture->textureId());
     }
 }
-void EarthRenderer::Earth::ReleaseTextures()
+void GlobeRenderer::Globe::ReleaseTextures()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void EarthRenderer::Earth::AddTexture(GLuint unit, const QString& path)
+void GlobeRenderer::Globe::AddTexture(GLuint unit, const QString& path)
 {
     if (const auto texture = Util::LoadTexture(path))
     {
@@ -42,12 +42,12 @@ void EarthRenderer::Earth::AddTexture(GLuint unit, const QString& path)
     }
     else
     {
-        LOG_FATAL("Earth::AddTexture: Texture could not be loaded. Exiting...");
+        LOG_FATAL("Globe::AddTexture: Texture could not be loaded. Exiting...");
         std::exit(EXIT_FAILURE);
     }
 }
 
-void EarthRenderer::Earth::Rotate(const QVector3D& axis, float angle)
+void GlobeRenderer::Globe::Rotate(const QVector3D& axis, float angle)
 {
     SetRotation(QQuaternion::fromAxisAndAngle(axis, angle) * GetRotation());
 }

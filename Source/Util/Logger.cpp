@@ -1,7 +1,7 @@
 
 #include "Logger.h"
 
-void EarthRenderer::Logger::Log(LogLevel level, const std::string& message)
+void GlobeRenderer::Logger::Log(LogLevel level, const std::string& message)
 {
     thread_local const auto TL_THREAD_ID = mLastThreadId.fetch_add(1);
 
@@ -24,17 +24,17 @@ void EarthRenderer::Logger::Log(LogLevel level, const std::string& message)
     }
 }
 
-void EarthRenderer::Logger::SetLogLevel(LogLevel logLevel)
+void GlobeRenderer::Logger::SetLogLevel(LogLevel logLevel)
 {
     mLogLevel = logLevel;
 }
 
-EarthRenderer::LogLevel EarthRenderer::Logger::GetLogLevel()
+GlobeRenderer::LogLevel GlobeRenderer::Logger::GetLogLevel()
 {
     return mLogLevel;
 }
 
-std::string EarthRenderer::Logger::GetTimeString()
+std::string GlobeRenderer::Logger::GetTimeString()
 {
     const auto zone = std::chrono::current_zone();
     const auto now = std::chrono::system_clock::now();
@@ -43,11 +43,11 @@ std::string EarthRenderer::Logger::GetTimeString()
     return std::format("{:%T}", local);
 }
 
-bool EarthRenderer::Logger::isLogEnabledFor(LogLevel level)
+bool GlobeRenderer::Logger::isLogEnabledFor(LogLevel level)
 {
     return mLogLevel <= level;
 }
 
-EarthRenderer::LogLevel EarthRenderer::Logger::mLogLevel = EarthRenderer::LogLevel::ALL;
+GlobeRenderer::LogLevel GlobeRenderer::Logger::mLogLevel = GlobeRenderer::LogLevel::ALL;
 
-std::atomic_uint32_t EarthRenderer::Logger::mLastThreadId = 0;
+std::atomic_uint32_t GlobeRenderer::Logger::mLastThreadId = 0;

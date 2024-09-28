@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QOpenGLExtraFunctions>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Space : public QObject, protected QOpenGLExtraFunctions
     {

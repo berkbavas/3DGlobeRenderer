@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25.1)
 
-project(3DEarthRenderer VERSION 1.0.0 LANGUAGES CXX)
+project(3DGlobeRenderer VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_PREFIX_PATH "$ENV{Qt5_DIR}")
 
@@ -19,21 +19,21 @@ find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
 
 add_compile_options(/bigobj)
 
-file(GLOB_RECURSE SOURCES Source/*.cpp Source/*.h 3DEarthRenderer.qrc)
+file(GLOB_RECURSE SOURCES Source/*.cpp Source/*.h 3DGlobeRenderer.qrc)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Source" ${INCLUDE_DIR})
 
 link_directories(${LIBS_DIR})
 
-add_executable(3DEarthRenderer ${SOURCES})
+add_executable(3DGlobeRenderer ${SOURCES})
 
-target_link_libraries(3DEarthRenderer Qt5::Core Qt5::Widgets Qt5::OpenGL ${RELEASE_LIBS})
+target_link_libraries(3DGlobeRenderer Qt5::Core Qt5::Widgets Qt5::OpenGL ${RELEASE_LIBS})
 
-add_custom_command(TARGET 3DEarthRenderer 
+add_custom_command(TARGET 3DGlobeRenderer 
 POST_BUILD COMMAND xcopy /E /Y "\"$(SolutionDir)../Resources\"" "\"$(OutDir)Resources/*\"")
 
-add_custom_command(TARGET 3DEarthRenderer
+add_custom_command(TARGET 3DGlobeRenderer
 POST_BUILD COMMAND xcopy /E /Y  "\"$(SolutionDir)../Resources\"" "\"$(BuildDir)Resources/*\"")
 
-add_custom_command(TARGET 3DEarthRenderer 
+add_custom_command(TARGET 3DGlobeRenderer 
 POST_BUILD COMMAND "$ENV{Qt5_DIR}/bin/windeployqt.exe" "\"$(OutDir)$(TargetName)$(TargetExt)\"")

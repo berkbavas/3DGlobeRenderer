@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Node/Camera.h"
-#include "Node/Earth.h"
+#include "Node/Globe.h"
 #include "Node/Space.h"
 #include "Node/Sun.h"
 #include "Renderer/Shader.h"
@@ -12,7 +12,7 @@
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLFunctions>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Controller;
     class ShaderManager;
@@ -34,24 +34,22 @@ namespace EarthRenderer
         QVector3D GetMouseWorldPosition(int x, int y);
 
         Camera* GetCamera();
-        Earth* GetEarth();
+        Globe* GetGlobe();
 
       private:
         void RenderSpace();
-        void RenderEarth();
+        void RenderGlobe();
         void RenderForMousePosition();
 
-        void RotateEarth(int x, int y, int prevX, int prevY);
-        void UpdateCamera(float ifps);
 
       private:
-        Shader* mEarthShader;
+        Shader* mGlobeShader;
         Shader* mMousePositionShader;
         Shader* mSpaceShader;
 
         Sun* mSun;
         Camera* mCamera;
-        Earth* mEarth;
+        Globe* mGlobe;
         Space* mSpace;
 
         float mWidth{1600};

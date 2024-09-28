@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Camera : public Node
     {
@@ -23,13 +23,13 @@ namespace EarthRenderer
 
         void Reset();
         void Resize(int width, int height);
-
         void AddDistance(float delta);
-        float& GetDistance();
-
         void AddTilt(float delta);
-
         void UpdateTransformation() override;
+
+        float GetAspectRatio() const;
+        float& GetDistance();
+        float GetHorizontalFov() const;
 
         DEFINE_MEMBER(int, Width, 1600);
         DEFINE_MEMBER(int, Height, 900);

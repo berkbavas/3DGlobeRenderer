@@ -3,7 +3,7 @@
 #include <QVector2D>
 #include <QVector3D>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     struct Vertex
     {

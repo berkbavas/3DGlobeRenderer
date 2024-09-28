@@ -8,7 +8,7 @@
 #include <QVector>
 #include <map>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class ModelData : protected QOpenGLExtraFunctions
     {

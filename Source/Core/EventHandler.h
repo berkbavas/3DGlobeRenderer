@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Node/Camera.h"
-#include "Node/Earth.h"
+#include "Node/Globe.h"
 
 #include <QMouseEvent>
 #include <QObject>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     struct Mouse
     {
@@ -26,7 +26,7 @@ namespace EarthRenderer
         void Update(float ifps);
 
         void UpdateCameraTransformation(float ifps);
-        void UpdateEarthTransformation(float ifps);
+        void UpdateGlobeTransformation(float ifps);
 
         void MousePressed(QMouseEvent*);
         void MouseReleased(QMouseEvent*);
@@ -39,17 +39,20 @@ namespace EarthRenderer
       private:
         Renderer* mRenderer;
         Camera* mCamera;
-        Earth* mEarth;
+        Globe* mGlobe;
 
         float mCameraTiltSpeed{20.0f};
         float mCameraDistanceSpeed{10.0f};
-        float mEarthRotationSpeed{30.0f};
+        float mGlobeRotationSpeed{10.0f};
 
-        QVector3D mMouseEarthPosition;
-        QVector3D mRotationAxis;
-        float mEarthRotationAngleToBeConsumed{0};
-        float mTiltAngleToBeConsumed{0};
-        float mDistanceToBeConsumed{0};
+        // Camera
+        float mTiltAngle{0};
+        float mDistance{0};
+
+        // Globe
+        float mPhi{0};
+        float mTheta{0};
+        float mRoll{0};
 
         Mouse mMouse;
 

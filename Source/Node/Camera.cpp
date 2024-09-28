@@ -1,16 +1,19 @@
 #include "Camera.h"
 
-EarthRenderer::Camera::Camera(QObject* parent)
+#include <QtMath>
+#include <cmath>
+
+GlobeRenderer::Camera::Camera(QObject* parent)
     : Node(parent)
 {
 }
 
-QMatrix4x4 EarthRenderer::Camera::GetViewProjectionMatrix()
+QMatrix4x4 GlobeRenderer::Camera::GetViewProjectionMatrix()
 {
     return GetProjectionMatrix() * GetViewMatrix();
 }
 
-QMatrix4x4 EarthRenderer::Camera::GetViewMatrix()
+QMatrix4x4 GlobeRenderer::Camera::GetViewMatrix()
 {
     QMatrix4x4 viewMatrix;
     viewMatrix.rotate(GetRotation().conjugated());
@@ -19,38 +22,38 @@ QMatrix4x4 EarthRenderer::Camera::GetViewMatrix()
     return viewMatrix;
 }
 
-QMatrix4x4 EarthRenderer::Camera::GetRotationMatrix()
+QMatrix4x4 GlobeRenderer::Camera::GetRotationMatrix()
 {
     auto rotation = GetViewMatrix();
     rotation.setColumn(3, QVector4D(0, 0, 0, 1));
     return rotation;
 }
 
-QVector3D EarthRenderer::Camera::GetViewDirection()
+QVector3D GlobeRenderer::Camera::GetViewDirection()
 {
     return GetRotation() * QVector3D(0, 0, -1);
 }
 
-void EarthRenderer::Camera::Resize(int width, int height)
+void GlobeRenderer::Camera::Resize(int width, int height)
 {
     mWidth = width;
     mHeight = height;
 }
 
-QMatrix4x4 EarthRenderer::Camera::GetProjectionMatrix()
+QMatrix4x4 GlobeRenderer::Camera::GetProjectionMatrix()
 {
     QMatrix4x4 projection;
-    projection.perspective(mVerticalFov, float(mWidth) / float(mHeight), mZNear, mZFar);
+    projection.perspective(mVerticalFov, GetAspectRatio(), mZNear, mZFar);
     return projection;
 }
 
-void EarthRenderer::Camera::Reset()
+void GlobeRenderer::Camera::Reset()
 {
     mZoomLevel = 100;
     mTilt = 0.0f;
 }
 
-void EarthRenderer::Camera::AddDistance(float delta)
+void GlobeRenderer::Camera::AddDistance(float delta)
 {
     float& z = GetPosition()[2];
     z += delta;
@@ -59,12 +62,12 @@ void EarthRenderer::Camera::AddDistance(float delta)
     UpdateTransformation();
 }
 
-float& EarthRenderer::Camera::GetDistance()
+float& GlobeRenderer::Camera::GetDistance()
 {
     return GetPosition()[2];
 }
 
-void EarthRenderer::Camera::AddTilt(float delta)
+void GlobeRenderer::Camera::AddTilt(float delta)
 {
     mTilt += delta;
     mTilt = qBound(-89.0f, mTilt, 89.0f);
@@ -72,7 +75,7 @@ void EarthRenderer::Camera::AddTilt(float delta)
     UpdateTransformation();
 }
 
-void EarthRenderer::Camera::UpdateTransformation()
+void GlobeRenderer::Camera::UpdateTransformation()
 {
     auto rotation = QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), mTilt);
 
@@ -82,4 +85,17 @@ void EarthRenderer::Camera::UpdateTransformation()
 
     SetRotation(rotation);
     SetPosition(distance * direction);
+}
+
+float GlobeRenderer::Camera::GetAspectRatio() const
+{
+    return float(mWidth) / float(mHeight);
+}
+float GlobeRenderer::Camera::GetHorizontalFov() const
+{
+    const auto ar = GetAspectRatio();
+    const auto vfov = mVerticalFov;
+    const auto hfov = qAtan(qTan(vfov / 2.0) / ar) * 2.0f;
+
+    return qAbs(qRadiansToDegrees(hfov));
 }

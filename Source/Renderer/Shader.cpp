@@ -5,13 +5,13 @@
 #include <QDebug>
 #include <QFile>
 
-EarthRenderer::Shader::Shader(const QString& name)
+GlobeRenderer::Shader::Shader(const QString& name)
     : mProgram(nullptr)
     , mName(name)
 {
 }
 
-bool EarthRenderer::Shader::Initialize()
+bool GlobeRenderer::Shader::Initialize()
 {
     initializeOpenGLFunctions();
 
@@ -47,27 +47,27 @@ bool EarthRenderer::Shader::Initialize()
     return true;
 }
 
-bool EarthRenderer::Shader::Bind()
+bool GlobeRenderer::Shader::Bind()
 {
     return mProgram->bind();
 }
 
-void EarthRenderer::Shader::Release()
+void GlobeRenderer::Shader::Release()
 {
     mProgram->release();
 }
 
-void EarthRenderer::Shader::AddPath(QOpenGLShader::ShaderTypeBit type, const QString& path)
+void GlobeRenderer::Shader::AddPath(QOpenGLShader::ShaderTypeBit type, const QString& path)
 {
     mPaths.emplace(type, path);
 }
 
-QString EarthRenderer::Shader::GetName() const
+QString GlobeRenderer::Shader::GetName() const
 {
     return mName;
 }
 
-QString EarthRenderer::Shader::GetShaderTypeString(QOpenGLShader::ShaderTypeBit type)
+QString GlobeRenderer::Shader::GetShaderTypeString(QOpenGLShader::ShaderTypeBit type)
 {
     switch (type)
     {

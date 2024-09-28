@@ -9,7 +9,7 @@
 #include <QSharedPointer>
 #include <map>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     class Shader : protected QOpenGLFunctions
     {

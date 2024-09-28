@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-namespace EarthRenderer
+namespace GlobeRenderer
 {
     enum class LogLevel
     {
@@ -62,19 +62,19 @@ namespace EarthRenderer
 #define LOG_PRIVATE(LEVEL, FORMAT, ...)                                          \
     do                                                                           \
     {                                                                            \
-        if (EarthRenderer::Logger::isLogEnabledFor(LEVEL))                       \
+        if (GlobeRenderer::Logger::isLogEnabledFor(LEVEL))                       \
         {                                                                        \
-            EarthRenderer::Logger::Log(LEVEL, std::format(FORMAT, __VA_ARGS__)); \
+            GlobeRenderer::Logger::Log(LEVEL, std::format(FORMAT, __VA_ARGS__)); \
         }                                                                        \
     } while (false)
 
-#define LOG_TRACE(FORMAT, ...) LOG_PRIVATE(EarthRenderer::LogLevel::TRACE, FORMAT, __VA_ARGS__)
-#define LOG_DEBUG(FORMAT, ...) LOG_PRIVATE(EarthRenderer::LogLevel::DEBUG, FORMAT, __VA_ARGS__)
-#define LOG_INFO(FORMAT, ...)  LOG_PRIVATE(EarthRenderer::LogLevel::INFO, FORMAT, __VA_ARGS__)
-#define LOG_WARN(FORMAT, ...)  LOG_PRIVATE(EarthRenderer::LogLevel::WARNING, FORMAT, __VA_ARGS__)
-#define LOG_FATAL(FORMAT, ...) LOG_PRIVATE(EarthRenderer::LogLevel::FATAL, FORMAT, __VA_ARGS__)
+#define LOG_TRACE(FORMAT, ...) LOG_PRIVATE(GlobeRenderer::LogLevel::TRACE, FORMAT, __VA_ARGS__)
+#define LOG_DEBUG(FORMAT, ...) LOG_PRIVATE(GlobeRenderer::LogLevel::DEBUG, FORMAT, __VA_ARGS__)
+#define LOG_INFO(FORMAT, ...)  LOG_PRIVATE(GlobeRenderer::LogLevel::INFO, FORMAT, __VA_ARGS__)
+#define LOG_WARN(FORMAT, ...)  LOG_PRIVATE(GlobeRenderer::LogLevel::WARNING, FORMAT, __VA_ARGS__)
+#define LOG_FATAL(FORMAT, ...) LOG_PRIVATE(GlobeRenderer::LogLevel::FATAL, FORMAT, __VA_ARGS__)
 
-#define EARTH_ASSERT(EXPRESSION, FORMAT, ...) \
+#define GLOBE_ASSERT(EXPRESSION, FORMAT, ...) \
     do                                        \
     {                                         \
         if ((EXPRESSION) == false)            \
