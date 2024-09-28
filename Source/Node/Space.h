@@ -20,7 +20,7 @@ namespace GlobeRenderer
       private:
         DEFINE_MEMBER(GLuint, VertexArray, 0);
         DEFINE_MEMBER(GLuint, VertexBuffer, 0);
-        DEFINE_MEMBER(float, Brightness, 1.0f);
+        DEFINE_MEMBER(float, Brightness, 0.5f);
 
         ModelData* mModelData;
         GLuint mTextureId;

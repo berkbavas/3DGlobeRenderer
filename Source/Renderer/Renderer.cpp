@@ -52,11 +52,10 @@ bool GlobeRenderer::Renderer::Initialize()
     mGlobe->SetScale(1, 1, 1);
     mGlobe->LoadModelData("Resources/Models/Globe.obj");
     mGlobe->AddTexture(0, "Resources/Textures/world.topo.bathy.200406.3x5400x2700.jpg");
-    // mGlobe->AddTexture(1, "Resources/HeightMaps/gebco_08_rev_elev_21600x10800.png");
 
     mSpace = new Space(this);
     mSpace->LoadModelData("Resources/Models/Cube.obj");
-    mSpace->LoadTextures("Resources/Textures/Stars", ".jpg");
+    mSpace->LoadTextures("Resources/Textures/MilkyWay", ".png");
 
     LOG_DEBUG("Renderer::Initialize: Application is running...");
 
@@ -112,7 +111,6 @@ void GlobeRenderer::Renderer::RenderGlobe()
     mGlobeShader->SetUniformValue("sun.ambient", mSun->GetAmbient());
     mGlobeShader->SetUniformValue("sun.diffuse", mSun->GetDiffuse());
     mGlobeShader->SetUniformValue("sun.specular", mSun->GetSpecular());
-    // mGlobeShader->SetUniformValue("heightMap", 1);
     mGlobe->BindTextures();
     mGlobe->Render();
     mGlobe->ReleaseTextures();
