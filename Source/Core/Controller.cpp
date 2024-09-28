@@ -48,6 +48,7 @@ void GlobeRenderer::Controller::Update(float ifps)
 {
     mDevicePixelRatio = mWindow->devicePixelRatio();
     mEventHandler->SetDevicePixelRatio(mDevicePixelRatio);
+    mRenderer->SetDevicePixelRatio(mDevicePixelRatio);
     mEventHandler->Update(ifps);
 }
 
@@ -68,7 +69,6 @@ void GlobeRenderer::Controller::Render(float ifps)
     ImGui::Begin("Debug");
 
     mRenderer->DrawGui();
-    mEventHandler->DrawGui();
 
     ImGui::End();
     ImGui::Render();
@@ -122,6 +122,7 @@ void GlobeRenderer::Controller::MouseMoved(QMouseEvent* event)
     }
 
     mEventHandler->MouseMoved(event);
+    mRenderer->MouseMoved(event);
 }
 
 void GlobeRenderer::Controller::WheelMoved(QWheelEvent* event)

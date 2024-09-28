@@ -31,6 +31,8 @@ namespace GlobeRenderer
 
         void Resize(int w, int h);
 
+        void MouseMoved(QMouseEvent*);
+
         QVector3D GetMouseWorldPosition(int x, int y);
 
         Camera* GetCamera();
@@ -40,7 +42,6 @@ namespace GlobeRenderer
         void RenderSpace();
         void RenderGlobe();
         void RenderForMousePosition();
-
 
       private:
         Shader* mGlobeShader;
@@ -57,7 +58,8 @@ namespace GlobeRenderer
 
         QOpenGLFramebufferObjectFormat mMousePositionFramebufferFormat;
         QOpenGLFramebufferObject* mMousePositionFramebuffer{nullptr};
-        QVector4D mMouseWorldPosition;
-        QVector4D mMouseWorldPositionPrevious;
+        QVector4D mMousePositionOnGlobe;
+
+        DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
     };
 }

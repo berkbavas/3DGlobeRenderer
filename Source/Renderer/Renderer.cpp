@@ -175,7 +175,7 @@ void GlobeRenderer::Renderer::DrawGui()
         }
     }
 
-    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMouseWorldPosition[0], mMouseWorldPosition[1]);
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
@@ -195,6 +195,13 @@ void GlobeRenderer::Renderer::Resize(int width, int height)
     }
 
     mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
+}
+
+void GlobeRenderer::Renderer::MouseMoved(QMouseEvent* event)
+{
+    const int x = mDevicePixelRatio * event->pos().x();
+    const int y = mDevicePixelRatio * event->pos().y();
+    mMousePositionOnGlobe = GetMouseWorldPosition(x, y);
 }
 
 GlobeRenderer::Camera* GlobeRenderer::Renderer::GetCamera()

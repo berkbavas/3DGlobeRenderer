@@ -22,7 +22,6 @@ namespace GlobeRenderer
       public:
         explicit EventHandler(QObject* parent = nullptr);
 
-        void DrawGui();
         void Update(float ifps);
 
         void UpdateCameraTransformation(float ifps);

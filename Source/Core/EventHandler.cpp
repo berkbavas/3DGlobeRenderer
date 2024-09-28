@@ -80,16 +80,6 @@ void GlobeRenderer::EventHandler::UpdateGlobeTransformation(float ifps)
     }
 }
 
-void GlobeRenderer::EventHandler::DrawGui()
-{
-    if (!ImGui::CollapsingHeader("Action Speed"))
-    {
-        ImGui::SliderFloat("Camera Tilt Speed", &mCameraTiltSpeed, 1.0f, 50.0f, "%.2f");
-        ImGui::SliderFloat("Camera Distance Speed", &mCameraDistanceSpeed, 1.0f, 50.0f, "%.2f");
-        ImGui::SliderFloat("Globe Rotation Speed", &mGlobeRotationSpeed, 1.0f, 50.0f, "%.2f");
-    }
-}
-
 void GlobeRenderer::EventHandler::MousePressed(QMouseEvent* event)
 {
     mMouse.x = event->pos().x() * mDevicePixelRatio;
