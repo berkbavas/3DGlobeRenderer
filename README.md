@@ -14,4 +14,4 @@
 10) Build & run with `Release` config.
 
 ## Video
-https://github.com/user-attachments/assets/c24eab97-36b1-4064-8743-249adaa78d8c
+https://github.com/user-attachments/assets/4df2122d-be62-48bf-8dea-97887d2e4332
