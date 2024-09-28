@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QVector3D>
+#include <QtMath>
 
 namespace EarthRenderer
 {

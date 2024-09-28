@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QVector2D>
 #include <QVector3D>
 
 namespace EarthRenderer

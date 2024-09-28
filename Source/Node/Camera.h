@@ -11,7 +11,6 @@ namespace EarthRenderer
 {
     class Camera : public Node
     {
-
       public:
         explicit Camera(QObject* parent = nullptr);
         ~Camera() = default;
@@ -24,6 +23,13 @@ namespace EarthRenderer
 
         void Reset();
         void Resize(int width, int height);
+
+        void AddDistance(float delta);
+        float& GetDistance();
+
+        void AddTilt(float delta);
+
+        void UpdateTransformation() override;
 
         DEFINE_MEMBER(int, Width, 1600);
         DEFINE_MEMBER(int, Height, 900);

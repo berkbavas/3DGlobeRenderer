@@ -17,17 +17,6 @@ namespace EarthRenderer
     class Controller;
     class ShaderManager;
 
-    struct Mouse
-    {
-        Qt::MouseButton button = Qt::NoButton;
-        float x{0};
-        float y{0};
-        float w{0};
-        float dx{0};
-        float dy{0};
-        float dw{0};
-    };
-
     class Renderer : public QObject, protected QOpenGLFunctions
     {
         DISABLE_COPY(Renderer);
@@ -37,25 +26,23 @@ namespace EarthRenderer
         virtual ~Renderer() = default;
         bool Initialize();
 
-        void Update(float ifps);
         void Render(float ifps);
+        void DrawGui();
+
         void Resize(int w, int h);
-        void KeyPressed(QKeyEvent*);
-        void KeyReleased(QKeyEvent*);
-        void MousePressed(QMouseEvent*);
-        void MouseReleased(QMouseEvent*);
-        void MouseMoved(QMouseEvent*);
-        void WheelMoved(QWheelEvent*);
+
+        QVector3D GetMouseWorldPosition(int x, int y);
+
+        Camera* GetCamera();
+        Earth* GetEarth();
 
       private:
         void RenderSpace();
         void RenderEarth();
         void RenderForMousePosition();
-        void DrawGui();
 
         void RotateEarth(int x, int y, int prevX, int prevY);
-        void RotateCamera(float ifps);
-        QVector3D GetMouseWorldPosition(int x, int y);
+        void UpdateCamera(float ifps);
 
       private:
         Shader* mEarthShader;
@@ -67,12 +54,8 @@ namespace EarthRenderer
         Earth* mEarth;
         Space* mSpace;
 
-        Mouse mMouse;
-        bool mRotateEarth{false};
-        bool mRotateCamera{false};
-
-        int mWidth{1600};
-        int mHeight{900};
+        float mWidth{1600};
+        float mHeight{900};
 
         QOpenGLFramebufferObjectFormat mMousePositionFramebufferFormat;
         QOpenGLFramebufferObject* mMousePositionFramebuffer{nullptr};

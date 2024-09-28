@@ -8,7 +8,6 @@
 
 namespace EarthRenderer
 {
-
     class Space : public QObject, protected QOpenGLExtraFunctions
     {
       public:
@@ -21,7 +20,7 @@ namespace EarthRenderer
       private:
         DEFINE_MEMBER(GLuint, VertexArray, 0);
         DEFINE_MEMBER(GLuint, VertexBuffer, 0);
-        DEFINE_MEMBER(float, Brightness, 0.5f);
+        DEFINE_MEMBER(float, Brightness, 1.0f);
 
         ModelData* mModelData;
         GLuint mTextureId;

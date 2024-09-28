@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QImage>
 #include <QTextStream>
+#include <QVector2D>
 #include <QVector3D>
 
 QByteArray EarthRenderer::Util::GetBytes(const QString& path)

@@ -49,3 +49,37 @@ void EarthRenderer::Camera::Reset()
     mZoomLevel = 100;
     mTilt = 0.0f;
 }
+
+void EarthRenderer::Camera::AddDistance(float delta)
+{
+    float& z = GetPosition()[2];
+    z += delta;
+    z = qBound(12.5f, z, 50.0f);
+
+    UpdateTransformation();
+}
+
+float& EarthRenderer::Camera::GetDistance()
+{
+    return GetPosition()[2];
+}
+
+void EarthRenderer::Camera::AddTilt(float delta)
+{
+    mTilt += delta;
+    mTilt = qBound(-89.0f, mTilt, 89.0f);
+
+    UpdateTransformation();
+}
+
+void EarthRenderer::Camera::UpdateTransformation()
+{
+    auto rotation = QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), mTilt);
+
+    const auto direction = GetPosition().normalized();
+    const auto distance = GetPosition().length();
+    auto newDirection = rotation * direction;
+
+    SetRotation(rotation);
+    SetPosition(distance * direction);
+}

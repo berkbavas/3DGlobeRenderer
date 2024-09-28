@@ -37,7 +37,7 @@ namespace EarthRenderer
         void SetPosition(float x, float y, float z);
         void SetScale(float x, float y, float z);
 
-        void UpdateTransformation();
+        virtual void UpdateTransformation();
 
       private:
         QMatrix4x4 mTransformation;

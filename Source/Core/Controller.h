@@ -2,13 +2,15 @@
 
 #include <QMouseEvent>
 #include <QObject>
+#include <QOpenGLFunctions>
 
 namespace EarthRenderer
 {
+    class EventHandler;
     class Renderer;
     class Window;
 
-    class Controller : public QObject
+    class Controller : public QObject, protected QOpenGLFunctions
     {
         Q_OBJECT
       public:
@@ -32,5 +34,10 @@ namespace EarthRenderer
       private:
         Window* mWindow;
         Renderer* mRenderer;
+        EventHandler* mEventHandler;
+
+        float mDevicePixelRatio{1.0f};
+        float mWidth{1600};
+        float mHeight{900};
     };
 }

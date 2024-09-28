@@ -10,10 +10,10 @@ EarthRenderer::Window::Window(QWindow* parent)
     : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent)
 
 {
-    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-    format.setSamples(4);
-    format.setSwapInterval(1);
-    setFormat(format);
+    // QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+    // format.setSamples(4);
+    // format.setSwapInterval(1);
+    // setFormat(format);
 
     connect(this, &QOpenGLWindow::frameSwapped, [=]()
             { update(); });
@@ -31,13 +31,9 @@ void EarthRenderer::Window::initializeGL()
     emit Initialize();
 }
 
-void EarthRenderer::Window::resizeGL(int w, int h)
+void EarthRenderer::Window::resizeGL(int width, int height)
 {
-    w = w * devicePixelRatio();
-    h = h * devicePixelRatio();
-    glViewport(0, 0, w, h);
-
-    emit Resize(w, h);
+    emit Resize(width, height);
 }
 
 void EarthRenderer::Window::paintGL()

@@ -46,3 +46,8 @@ void EarthRenderer::Earth::AddTexture(GLuint unit, const QString& path)
         std::exit(EXIT_FAILURE);
     }
 }
+
+void EarthRenderer::Earth::Rotate(const QVector3D& axis, float angle)
+{
+    SetRotation(QQuaternion::fromAxisAndAngle(axis, angle) * GetRotation());
+}

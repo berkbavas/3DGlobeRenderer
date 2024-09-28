@@ -23,6 +23,8 @@ namespace EarthRenderer
         void ReleaseTextures();
         void AddTexture(GLuint unit, const QString& path);
 
+        void Rotate(const QVector3D& axis, float angle);
+
       private:
         DEFINE_MEMBER(float, Ambient, 1.0f);
         DEFINE_MEMBER(float, Diffuse, 1.0f);

@@ -1,5 +1,6 @@
 #include "Controller.h"
 
+#include "Core/EventHandler.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Window.h"
 #include "Util/Logger.h"
@@ -10,7 +11,9 @@ EarthRenderer::Controller::Controller(QObject* parent)
     LOG_DEBUG("Application starting...");
 
     mWindow = new Window;
-    mRenderer = new Renderer;
+    mRenderer = new Renderer(this);
+    mEventHandler = new EventHandler(this);
+    mEventHandler->SetRenderer(mRenderer);
 
     connect(mWindow, &EarthRenderer::Window::Initialize, this, &EarthRenderer::Controller::Initialize);
     connect(mWindow, &EarthRenderer::Window::Update, this, &EarthRenderer::Controller::Update);
@@ -35,52 +38,78 @@ void EarthRenderer::Controller::Run()
 
 void EarthRenderer::Controller::Initialize()
 {
+    initializeOpenGLFunctions();
+
     mRenderer->Initialize();
+    mEventHandler->Initialize();
 }
 
 void EarthRenderer::Controller::Update(float ifps)
 {
-    mRenderer->Update(ifps);
+    mDevicePixelRatio = mWindow->devicePixelRatio();
+    mEventHandler->SetDevicePixelRatio(mDevicePixelRatio);
+    mEventHandler->Update(ifps);
 }
 
 void EarthRenderer::Controller::Render(float ifps)
 {
+    mWidth = mWindow->width() * mDevicePixelRatio;
+    mHeight = mWindow->height() * mDevicePixelRatio;
+
     mRenderer->Render(ifps);
+
+    QOpenGLFramebufferObject::bindDefault();
+    glViewport(0, 0, mWidth, mHeight);
+
+    QtImGui::newFrame();
+
+    ImGui::SetNextWindowSize(ImVec2(420, 420), ImGuiCond_FirstUseEver);
+
+    ImGui::Begin("Debug");
+
+    mRenderer->DrawGui();
+    mEventHandler->DrawGui();
+
+    ImGui::End();
+    ImGui::Render();
+    QtImGui::render();
 }
 
 void EarthRenderer::Controller::KeyPressed(QKeyEvent* event)
 {
-    mRenderer->KeyPressed(event);
 }
 
 void EarthRenderer::Controller::KeyReleased(QKeyEvent* event)
 {
-    mRenderer->KeyReleased(event);
 }
 
-void EarthRenderer::Controller::Resize(int w, int h)
+void EarthRenderer::Controller::Resize(int width, int height)
 {
+    mWidth = width * mDevicePixelRatio;
+    mHeight = height * mDevicePixelRatio;
+
     mWindow->makeCurrent();
-    mRenderer->Resize(w, h);
+
+    mRenderer->Resize(mWidth, mHeight);
     mWindow->doneCurrent();
 }
 
 void EarthRenderer::Controller::MousePressed(QMouseEvent* event)
 {
-    mRenderer->MousePressed(event);
+    mEventHandler->MousePressed(event);
 }
 
 void EarthRenderer::Controller::MouseReleased(QMouseEvent* event)
 {
-    mRenderer->MouseReleased(event);
+    mEventHandler->MouseReleased(event);
 }
 
 void EarthRenderer::Controller::MouseMoved(QMouseEvent* event)
 {
-    mRenderer->MouseMoved(event);
+    mEventHandler->MouseMoved(event);
 }
 
 void EarthRenderer::Controller::WheelMoved(QWheelEvent* event)
 {
-    mRenderer->WheelMoved(event);
+    mEventHandler->WheelMoved(event);
 }
