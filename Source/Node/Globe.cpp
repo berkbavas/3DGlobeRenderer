@@ -26,7 +26,7 @@ void GlobeRenderer::Globe::BindTextures()
     for (const auto& [unit, textureId] : mTextures)
     {
         glActiveTexture(GL_TEXTURE0 + unit);
-        glBindTexture(GL_TEXTURE_2D, textureId);
+        glBindTexture(mTextureTargets[unit], textureId);
     }
 }
 void GlobeRenderer::Globe::ReleaseTextures()
