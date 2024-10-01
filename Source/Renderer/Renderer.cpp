@@ -146,6 +146,8 @@ void GlobeRenderer::Renderer::RenderForMousePosition()
 
 void GlobeRenderer::Renderer::DrawGui(float ifps)
 {
+    ImGui::Begin("Debug");
+
     if (!ImGui::CollapsingHeader("Globe"))
     {
         ImGui::SliderFloat("Ambient##Globe", &mGlobe->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
@@ -184,6 +186,8 @@ void GlobeRenderer::Renderer::DrawGui(float ifps)
 
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+    ImGui::End();
 }
 
 void GlobeRenderer::Renderer::Resize(int width, int height)
