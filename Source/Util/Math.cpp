@@ -1,14 +1,5 @@
 #include "Math.h"
 
-#include <QDebug>
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QQuaternion>
-#include <QTextStream>
-#include <QtMath>
-
 QQuaternion GlobeRenderer::Math::RotateX(float angleRadians)
 {
     return QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), qRadiansToDegrees(angleRadians));

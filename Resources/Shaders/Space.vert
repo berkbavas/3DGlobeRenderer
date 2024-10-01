@@ -1,14 +1,14 @@
 #version 450 core
 
-layout (location = 0) in vec3 position;
+layout(location = 0) in vec3 position;
 
 uniform mat4 projection;
-uniform mat4 view;
+uniform mat4 rotation;
 
-out vec3 fsTextureCoords;
+out vec3 fs_TextureCoords;
 
 void main()
 {
-    fsTextureCoords = position;
-    gl_Position = projection * view * vec4(position, 1.0);
-}  
+    fs_TextureCoords = position;
+    gl_Position = projection * rotation * vec4(position, 1.0);
+}

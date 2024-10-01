@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <atomic>
 #include <chrono>
 #include <format>
@@ -74,12 +75,25 @@ namespace GlobeRenderer
 #define LOG_WARN(FORMAT, ...)  LOG_PRIVATE(GlobeRenderer::LogLevel::WARNING, FORMAT, __VA_ARGS__)
 #define LOG_FATAL(FORMAT, ...) LOG_PRIVATE(GlobeRenderer::LogLevel::FATAL, FORMAT, __VA_ARGS__)
 
-#define GLOBE_ASSERT(EXPRESSION, FORMAT, ...) \
-    do                                        \
-    {                                         \
-        if ((EXPRESSION) == false)            \
-        {                                     \
-            LOG_FATAL(FORMAT, __VA_ARGS__);   \
-            std::exit(EXIT_FAILURE);          \
-        }                                     \
+#define BR_ASSERT(EXPRESSION) assert(EXPRESSION)
+
+#define BR_ASSERT_OR_EXIT(EXPRESSION, FORMAT, ...) \
+    do                                             \
+    {                                              \
+        if ((EXPRESSION) == false)                 \
+        {                                          \
+            LOG_FATAL(FORMAT, __VA_ARGS__);        \
+            assert(EXPRESSION);                    \
+            std::exit(EXIT_FAILURE);               \
+        }                                          \
+    } while (false)
+
+#define BR_ASSERT_OR_CONTINUE(EXPRESSION, FORMAT, ...) \
+    do                                                 \
+    {                                                  \
+        if ((EXPRESSION) == false)                     \
+        {                                              \
+            LOG_FATAL(FORMAT, __VA_ARGS__);            \
+            assert(EXPRESSION);                        \
+        }                                              \
     } while (false)

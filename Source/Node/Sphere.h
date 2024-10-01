@@ -11,27 +11,35 @@
 
 #pragma once
 
+#include "Node/Renderable.h"
+
 #include <QOpenGLExtraFunctions>
-#include <string>
+#include <QString>
 #include <vector>
 
 namespace GlobeRenderer
 {
 
-    class Sphere : protected QOpenGLExtraFunctions
+    class Sphere : public Renderable
     {
       public:
         Sphere(float radius = 1.0f, int sectorCount = 36, int stackCount = 18, bool smooth = true);
+        virtual ~Sphere() = default;
+
+        // OpenGL
+        void Construct() override;
+        void Render() override;
+        void Destroy() override;
 
         // Getters/setters
         float GetRadius() const { return radius; }
         int GetSectorCount() const { return sectorCount; }
         int GetStackCount() const { return stackCount; }
-        void set(float radius, int sectorCount, int stackCount, bool smooth = true);
-        void setRadius(float radius);
-        void setSectorCount(int sectorCount);
-        void setStackCount(int stackCount);
-        void setSmooth(bool smooth);
+        void Set(float radius, int sectorCount, int stackCount, bool smooth = true);
+        void SetRadius(float radius);
+        void SetSectorCount(int sectorCount);
+        void SetStackCount(int stackCount);
+        void SetSmooth(bool smooth);
 
         // for vertex data
         unsigned int GetVertexCount() const { return (unsigned int) vertices.size() / 3; }
@@ -56,10 +64,6 @@ namespace GlobeRenderer
         unsigned int GetInterleavedVertexSize() const { return (unsigned int) interleavedVertices.size() * sizeof(float); } // # of bytes
         int GetInterleavedStride() const { return interleavedStride; }                                                      // should be 32 bytes
         const float* GetInterleavedVertices() const { return interleavedVertices.data(); }
-
-        // OpenGL
-        void CreateOpenGLStuff();
-        void Render();
 
         std::string ToString() const;
 
@@ -93,8 +97,8 @@ namespace GlobeRenderer
         int interleavedStride; // # of bytes to hop to the next vertex (should be 32 bytes)
 
         // OpenGL handles
-        GLuint vao{0};
+        GLuint vao{ 0 };
         GLuint vbo[3];
-        GLuint ebo{0};
+        GLuint ebo{ 0 };
     };
 }

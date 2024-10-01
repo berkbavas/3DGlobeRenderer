@@ -2,19 +2,16 @@
 
 #include "Util/Macros.h"
 
-#include <QObject>
 #include <QVector3D>
+#include <QVector4D>
 #include <QtMath>
 
 namespace GlobeRenderer
 {
-    class Sun : public QObject
+    class Sun
     {
       public:
-        explicit Sun(QObject* parent = nullptr)
-            : QObject(parent)
-        {
-        }
+        Sun() = default;
 
         float GetTheta() const
         {

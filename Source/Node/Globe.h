@@ -1,43 +1,32 @@
 #pragma once
 
-#include "Node/ModelData.h"
-#include "Node/Node.h"
 #include "Node/Sphere.h"
-#include "Util/Macros.h"
-#include "Util/TextureLoader.h"
+#include "Structs/Texture.h"
 
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLTexture>
 #include <QVector>
 #include <map>
 
-
 namespace GlobeRenderer
 {
-    class Globe : public Node, protected QOpenGLExtraFunctions
+    class Globe : public Sphere
     {
       public:
-        explicit Globe(QObject* parent = nullptr);
-        ~Globe() = default;
+        using Sphere::Sphere;
 
-        void Render();
-        void BindTextures();
-        void ReleaseTextures();
-        void AddTexture(GLuint unit, const QString& path);
-        void AddTextureCubeMap(GLuint unit, const QString& folder, const QString& extension);
+        Globe() = default;
+        ~Globe() override = default;
 
-        void Rotate(const QVector3D& axis, float angle);
+        void Construct() override;
+        void Render() override;
+        void Destroy() override;
 
       private:
-        DEFINE_MEMBER(float, Ambient, 1.0f);
-        DEFINE_MEMBER(float, Diffuse, 1.0f);
+        DEFINE_MEMBER(float, Ambient, 0.5f);
+        DEFINE_MEMBER(float, Diffuse, 0.75f);
         DEFINE_MEMBER(float, Specular, 0.25f);
         DEFINE_MEMBER(float, Shininess, 4.0f);
-
-        std::map<GLuint, GLuint> mTextures;
-        std::map<GLuint, GLuint> mTextureTargets;
-        Sphere* mSphere;
-
-        TextureLoader* mTextureLoader;
+        DEFINE_MEMBER(Texture, Texture);
     };
 }

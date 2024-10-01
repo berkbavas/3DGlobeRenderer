@@ -35,79 +35,14 @@ const int MIN_STACK_COUNT = 2;
 GlobeRenderer::Sphere::Sphere(float radius, int sectors, int stacks, bool smooth)
     : interleavedStride(32)
 {
-    set(radius, sectors, stacks, smooth);
+    Set(radius, sectors, stacks, smooth);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// setters
+// OpenGL Stuff
 ///////////////////////////////////////////////////////////////////////////////
-void GlobeRenderer::Sphere::set(float radius, int sectors, int stacks, bool smooth)
-{
-    this->radius = radius;
-    this->sectorCount = sectors;
-    if (sectors < MIN_SECTOR_COUNT)
-        this->sectorCount = MIN_SECTOR_COUNT;
-    this->stackCount = stacks;
-    if (sectors < MIN_STACK_COUNT)
-        this->sectorCount = MIN_STACK_COUNT;
-    this->smooth = smooth;
 
-    if (smooth)
-        BuildVerticesSmooth();
-    else
-        BuildVerticesFlat();
-}
-
-void GlobeRenderer::Sphere::setRadius(float radius)
-{
-    this->radius = radius;
-    UpdateRadius();
-}
-
-void GlobeRenderer::Sphere::setSectorCount(int sectors)
-{
-    set(radius, sectors, stackCount, smooth);
-}
-
-void GlobeRenderer::Sphere::setStackCount(int stacks)
-{
-    set(radius, sectorCount, stacks, smooth);
-}
-
-void GlobeRenderer::Sphere::setSmooth(bool smooth)
-{
-    if (this->smooth == smooth)
-        return;
-
-    this->smooth = smooth;
-    if (smooth)
-        BuildVerticesSmooth();
-    else
-        BuildVerticesFlat();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// print itself
-///////////////////////////////////////////////////////////////////////////////
-std::string GlobeRenderer::Sphere::ToString() const
-{
-    std::stringstream ss;
-
-    ss << "===== Sphere =====\n"
-       << "        Radius: " << radius << "\n"
-       << "  Sector Count: " << sectorCount << "\n"
-       << "   Stack Count: " << stackCount << "\n"
-       << "Smooth Shading: " << (smooth ? "true" : "false") << "\n"
-       << "Triangle Count: " << GetTriangleCount() << "\n"
-       << "   Index Count: " << GetIndexCount() << "\n"
-       << "  Vertex Count: " << GetVertexCount() << "\n"
-       << "  Normal Count: " << GetNormalCount() << "\n"
-       << "TexCoord Count: " << GetTexCoordCount();
-
-    return ss.str();
-}
-
-void GlobeRenderer::Sphere::CreateOpenGLStuff()
+void GlobeRenderer::Sphere::Construct()
 {
     initializeOpenGLFunctions();
 
@@ -142,6 +77,99 @@ void GlobeRenderer::Sphere::Render()
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, (unsigned int) indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void GlobeRenderer::Sphere::Destroy()
+{
+    if (vao)
+    {
+        glDeleteVertexArrays(1, &vao);
+        vao = 0;
+    }
+
+    if (ebo)
+    {
+        glDeleteBuffers(1, &ebo);
+        ebo = 0;
+    }
+
+    for (int i = 0; i < 3; ++i)
+    {
+        if (vbo[i])
+        {
+            glDeleteBuffers(1, &vbo[i]);
+            vbo[i] = 0;
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// setters
+///////////////////////////////////////////////////////////////////////////////
+void GlobeRenderer::Sphere::Set(float radius, int sectors, int stacks, bool smooth)
+{
+    this->radius = radius;
+    this->sectorCount = sectors;
+    if (sectors < MIN_SECTOR_COUNT)
+        this->sectorCount = MIN_SECTOR_COUNT;
+    this->stackCount = stacks;
+    if (sectors < MIN_STACK_COUNT)
+        this->sectorCount = MIN_STACK_COUNT;
+    this->smooth = smooth;
+
+    if (smooth)
+        BuildVerticesSmooth();
+    else
+        BuildVerticesFlat();
+}
+
+void GlobeRenderer::Sphere::SetRadius(float radius)
+{
+    this->radius = radius;
+    UpdateRadius();
+}
+
+void GlobeRenderer::Sphere::SetSectorCount(int sectors)
+{
+    Set(radius, sectors, stackCount, smooth);
+}
+
+void GlobeRenderer::Sphere::SetStackCount(int stacks)
+{
+    Set(radius, sectorCount, stacks, smooth);
+}
+
+void GlobeRenderer::Sphere::SetSmooth(bool smooth)
+{
+    if (this->smooth == smooth)
+        return;
+
+    this->smooth = smooth;
+    if (smooth)
+        BuildVerticesSmooth();
+    else
+        BuildVerticesFlat();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// print itself
+///////////////////////////////////////////////////////////////////////////////
+std::string GlobeRenderer::Sphere::ToString() const
+{
+    std::stringstream ss;
+
+    ss << "===== Sphere =====\n"
+       << "        Radius: " << radius << "\n"
+       << "  Sector Count: " << sectorCount << "\n"
+       << "   Stack Count: " << stackCount << "\n"
+       << "Smooth Shading: " << (smooth ? "true" : "false") << "\n"
+       << "Triangle Count: " << GetTriangleCount() << "\n"
+       << "   Index Count: " << GetIndexCount() << "\n"
+       << "  Vertex Count: " << GetVertexCount() << "\n"
+       << "  Normal Count: " << GetNormalCount() << "\n"
+       << "TexCoord Count: " << GetTexCoordCount();
+
+    return ss.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

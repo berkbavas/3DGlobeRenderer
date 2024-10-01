@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Util/Logger.h"
-
 #include <QOpenGLExtraFunctions>
-#include <QOpenGLTexture>
 
 namespace GlobeRenderer
 {
@@ -12,7 +9,7 @@ namespace GlobeRenderer
       public:
         TextureLoader();
 
-        QOpenGLTexture* LoadTexture2D(const QString& path);
+        GLuint LoadTexture2D(const QString& path);
         GLuint LoadTextureCubeMap(const QString& folder, const QString& extension);
     };
 }

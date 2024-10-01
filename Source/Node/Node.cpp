@@ -1,19 +1,5 @@
 #include "Node.h"
 
-#include <QtMath>
-
-GlobeRenderer::Node::Node(QObject* parent)
-    : QObject(parent)
-    , mPosition(0, 0, 0)
-    , mScale(1, 1, 1)
-{
-}
-
-const QQuaternion& GlobeRenderer::Node::GetRotation() const
-{
-    return mRotation;
-}
-
 void GlobeRenderer::Node::SetRotation(const QQuaternion& newRotation)
 {
     if (mRotation == newRotation)
@@ -22,17 +8,7 @@ void GlobeRenderer::Node::SetRotation(const QQuaternion& newRotation)
     }
 
     mRotation = newRotation;
-    UpdateTransformation();
-}
-
-const QVector3D& GlobeRenderer::Node::GetPosition() const
-{
-    return mPosition;
-}
-
-QVector3D& GlobeRenderer::Node::GetPosition()
-{
-    return mPosition;
+    Node::UpdateTransformation();
 }
 
 void GlobeRenderer::Node::SetPosition(const QVector3D& newPosition)
@@ -43,12 +19,7 @@ void GlobeRenderer::Node::SetPosition(const QVector3D& newPosition)
     }
 
     mPosition = newPosition;
-    UpdateTransformation();
-}
-
-const QVector3D& GlobeRenderer::Node::GetScale() const
-{
-    return mScale;
+    Node::UpdateTransformation();
 }
 
 void GlobeRenderer::Node::SetScale(const QVector3D& newScale)
@@ -59,12 +30,7 @@ void GlobeRenderer::Node::SetScale(const QVector3D& newScale)
     }
 
     mScale = newScale;
-    UpdateTransformation();
-}
-
-const QMatrix4x4& GlobeRenderer::Node::GetTransformation() const
-{
-    return mTransformation;
+    Node::UpdateTransformation();
 }
 
 void GlobeRenderer::Node::SetTransformation(const QMatrix4x4& newTransformation)
@@ -79,14 +45,6 @@ void GlobeRenderer::Node::SetTransformation(const QMatrix4x4& newTransformation)
     mRotation = QQuaternion::fromRotationMatrix(mTransformation.normalMatrix());
 }
 
-void GlobeRenderer::Node::UpdateTransformation()
-{
-    mTransformation.setToIdentity();
-    mTransformation.scale(mScale);
-    mTransformation.rotate(mRotation);
-    mTransformation.setColumn(3, QVector4D(mPosition, 1.0f));
-}
-
 void GlobeRenderer::Node::SetPosition(float x, float y, float z)
 {
     SetPosition(QVector3D(x, y, z));
@@ -96,7 +54,26 @@ void GlobeRenderer::Node::SetScale(float x, float y, float z)
 {
     SetScale(QVector3D(x, y, z));
 }
-QVector3D& GlobeRenderer::Node::GetScale()
+
+void GlobeRenderer::Node::UpdateTransformation()
 {
-    return mScale;
+    mTransformation.setToIdentity();
+    mTransformation.scale(mScale);
+    mTransformation.rotate(mRotation);
+    mTransformation.setColumn(3, QVector4D(mPosition, 1.0f));
+}
+
+void GlobeRenderer::Node::RotateGlobal(const QVector3D& axis, float angle)
+{
+    SetRotation(QQuaternion::fromAxisAndAngle(axis, angle) * GetRotation());
+}
+
+void GlobeRenderer::Node::RotateLocal(const QVector3D& axis, float angle)
+{
+    SetRotation(GetRotation() * QQuaternion::fromAxisAndAngle(axis, angle));
+}
+
+void GlobeRenderer::Node::Translate(const QVector3D& delta)
+{
+    SetPosition(mPosition + delta);
 }

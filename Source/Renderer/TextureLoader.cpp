@@ -1,13 +1,17 @@
 #include "TextureLoader.h"
 
+#include "Core/FailureBehaviour.h"
+#include "Util/Logger.h"
+
 #include <QImage>
+#include <QOpenGLTexture>
 
 GlobeRenderer::TextureLoader::TextureLoader()
 {
     initializeOpenGLFunctions();
 }
 
-QOpenGLTexture* GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
+GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
 {
     LOG_DEBUG("TextureLoader::LoadTexture2D: Loading texture at {}", path.toStdString());
 
@@ -15,8 +19,8 @@ QOpenGLTexture* GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
 
     if (image.isNull())
     {
-        LOG_FATAL("TextureLoader::LoadTexture2D: Image could not be loaded.");
-        return nullptr;
+        LOG_FATAL("TextureLoader::LoadTexture2D: Image is null.");
+        FailureBehaviour::Failure(FailureType::COULD_NOT_LOAD_TEXTURE);
     }
 
     QOpenGLTexture* texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
@@ -26,7 +30,7 @@ QOpenGLTexture* GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
 
     LOG_DEBUG("TextureLoader::LoadTexture2D: Texture has been loaded.");
 
-    return texture;
+    return texture->textureId();
 }
 
 GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& folder, const QString& extension)
@@ -60,8 +64,8 @@ GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& folder, c
 
         if (image.isNull())
         {
-            LOG_FATAL("TextureLoader::LoadTextureCubeMap: Image is null. Exiting...");
-            std::exit(EXIT_FAILURE);
+            LOG_FATAL("TextureLoader::LoadTextureCubeMap: Image is null.");
+            FailureBehaviour::Failure(FailureType::COULD_NOT_LOAD_TEXTURE);
         }
 
         glTexImage2D(targets[i], 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());

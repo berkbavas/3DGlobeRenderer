@@ -2,7 +2,7 @@
 
 #include <QMatrix4x4>
 #include <QQuaternion>
-#include <QString>
+#include <QtMath>
 
 namespace GlobeRenderer
 {
@@ -21,5 +21,17 @@ namespace GlobeRenderer
         static void GetEulerDegrees(const QQuaternion& rotation, float& yaw, float& pitch, float& roll);
         static QQuaternion ConstructFromEulerDegrees(float yaw, float pitch, float roll);
         static QVector3D ConstructFromLatLon(float lat, float lon);
+
+        template<typename T>
+        static int Sign(T val)
+        {
+            return (T(0) < val) - (val < T(0));
+        }
+
+        template<typename T>
+        static bool IsBetween(T min, T val, T max)
+        {
+            return min <= val && val <= max;
+        }
     };
 }

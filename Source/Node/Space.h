@@ -1,28 +1,24 @@
 #pragma once
 
-#include "Node/ModelData.h"
-#include "Util/Macros.h"
-
-#include <QObject>
-#include <QOpenGLExtraFunctions>
+#include "Node/Renderable.h"
+#include "Structs/Texture.h"
 
 namespace GlobeRenderer
 {
-    class Space : public QObject, protected QOpenGLExtraFunctions
+    class Space : public Renderable
     {
       public:
-        explicit Space(QObject* parent = nullptr);
+        Space() = default;
 
-        void LoadModelData(const QString& path);
-        void LoadTextures(const QString& folder, const QString& extension);
-        void Render();
+        void Construct() override;
+        void Render() override;
+        void Destroy() override;
 
       private:
-        DEFINE_MEMBER(GLuint, VertexArray, 0);
-        DEFINE_MEMBER(GLuint, VertexBuffer, 0);
-        DEFINE_MEMBER(float, Brightness, 0.5f);
+        GLuint mVertexArray{ 0 };
+        GLuint mVertexBuffer{ 0 };
 
-        ModelData* mModelData;
-        GLuint mTextureId;
+        DEFINE_MEMBER(float, Brightness, 0.5f);
+        DEFINE_MEMBER(Texture, Texture);
     };
 }

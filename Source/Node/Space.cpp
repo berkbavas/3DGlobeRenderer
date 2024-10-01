@@ -1,33 +1,85 @@
 #include "Space.h"
 
 #include "Util/Logger.h"
-#include "Util/TextureLoader.h"
 
-#include <QImage>
-#include <QString>
-
-GlobeRenderer::Space::Space(QObject* parent)
-    : QObject(nullptr)
+void GlobeRenderer::Space::Construct()
 {
     initializeOpenGLFunctions();
-}
 
-void GlobeRenderer::Space::LoadModelData(const QString& path)
-{
-    mModelData = new ModelData(path);
-}
+    constexpr float VERTICES[] = {
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
 
-void GlobeRenderer::Space::LoadTextures(const QString& folder, const QString& extension)
-{
-    TextureLoader loader;
-    mTextureId = loader.LoadTextureCubeMap(folder, extension);
+        -1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+
+        -1.0f, 1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &mVertexArray);
+    glGenBuffers(1, &mVertexBuffer);
+    glBindVertexArray(mVertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VERTICES), &VERTICES, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 }
 
 void GlobeRenderer::Space::Render()
 {
     glDisable(GL_DEPTH_TEST);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureId);
-    mModelData->Render();
+    glBindVertexArray(mVertexArray);
+    glActiveTexture(GL_TEXTURE0 + mTexture.unit);
+    glBindTexture(mTexture.target, mTexture.id);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     glEnable(GL_DEPTH_TEST);
+}
+
+void GlobeRenderer::Space::Destroy()
+{
+    if (mVertexArray)
+    {
+        glDeleteVertexArrays(1, &mVertexArray);
+        mVertexArray = 0;
+    }
+
+    if (mVertexBuffer)
+    {
+        glDeleteBuffers(1, &mVertexBuffer);
+        mVertexBuffer = 0;
+    }
 }

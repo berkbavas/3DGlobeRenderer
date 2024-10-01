@@ -10,11 +10,6 @@ GlobeRenderer::Window::Window(QWindow* parent)
     : QOpenGLWindow(QOpenGLWindow::UpdateBehavior::NoPartialUpdate, parent)
 
 {
-    // QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-    // format.setSamples(4);
-    // format.setSwapInterval(1);
-    // setFormat(format);
-
     connect(this, &QOpenGLWindow::frameSwapped, [=]()
             { update(); });
 }
@@ -25,8 +20,6 @@ void GlobeRenderer::Window::initializeGL()
 
     mCurrentTime = QDateTime::currentMSecsSinceEpoch();
     mPreviousTime = mCurrentTime;
-
-    QtImGui::initialize(this);
 
     emit Initialize();
 }
@@ -42,7 +35,6 @@ void GlobeRenderer::Window::paintGL()
     const float ifps = (mCurrentTime - mPreviousTime) * 0.001f;
     mPreviousTime = mCurrentTime;
 
-    emit Update(ifps);
     emit Render(ifps);
 }
 

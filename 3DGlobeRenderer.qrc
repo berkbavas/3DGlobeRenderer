@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>Resources/Shaders/Globe.frag</file>
-        <file>Resources/Shaders/Globe.vert</file>
+        <file>Resources/Shaders/Basic.frag</file>
+        <file>Resources/Shaders/Basic.vert</file>
         <file>Resources/Shaders/MousePosition.frag</file>
         <file>Resources/Shaders/MousePosition.vert</file>
         <file>Resources/Shaders/Space.frag</file>

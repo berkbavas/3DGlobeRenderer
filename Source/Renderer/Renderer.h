@@ -1,42 +1,35 @@
 #pragma once
 
-#include "Node/Camera.h"
+#include "Node/Camera/PersecutorCamera.h"
 #include "Node/Globe.h"
 #include "Node/Space.h"
 #include "Node/Sun.h"
 #include "Renderer/Shader.h"
+#include "Renderer/TextureLoader.h"
 
 #include <QMouseEvent>
-#include <QObject>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLFunctions>
 
 namespace GlobeRenderer
 {
-    class Controller;
-    class ShaderManager;
-
-    class Renderer : public QObject, protected QOpenGLFunctions
+    class Renderer : protected QOpenGLFunctions
     {
         DISABLE_COPY(Renderer);
 
       public:
-        explicit Renderer(QObject* parent = nullptr);
-        virtual ~Renderer() = default;
+        Renderer() = default;
+
         bool Initialize();
 
         void Render(float ifps);
-        void DrawGui();
-
+        void DrawGui(float ifps);
         void Resize(int w, int h);
 
-        void MouseMoved(QMouseEvent*);
+        void MouseMoved(QMouseEvent* event);
 
         QVector3D GetMouseWorldPosition(int x, int y);
-
-        Camera* GetCamera();
-        Globe* GetGlobe();
 
       private:
         void RenderSpace();
@@ -48,16 +41,18 @@ namespace GlobeRenderer
         Shader* mMousePositionShader;
         Shader* mSpaceShader;
 
-        Sun* mSun;
-        Camera* mCamera;
-        Globe* mGlobe;
-        Space* mSpace;
+        TextureLoader* mTextureLoader;
 
-        float mWidth{1600};
-        float mHeight{900};
+        DEFINE_MEMBER_PTR(Sun, Sun);
+        DEFINE_MEMBER_PTR(PersecutorCamera, Camera);
+        DEFINE_MEMBER_PTR(Globe, Globe);
+        DEFINE_MEMBER_PTR(Space, Space);
+
+        float mWidth{ INITIAL_WIDTH };
+        float mHeight{ INITIAL_HEIGHT };
 
         QOpenGLFramebufferObjectFormat mMousePositionFramebufferFormat;
-        QOpenGLFramebufferObject* mMousePositionFramebuffer{nullptr};
+        QOpenGLFramebufferObject* mMousePositionFramebuffer{ nullptr };
         QVector4D mMousePositionOnGlobe;
 
         DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);

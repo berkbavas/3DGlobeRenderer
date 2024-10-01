@@ -21,7 +21,7 @@ BreakConstructorInitializers: BeforeComma
 BreakStringLiterals: 'true'
 ColumnLimit: '0'
 CompactNamespaces: 'false'
-Cpp11BracedListStyle: 'true'
+Cpp11BracedListStyle: 'false'
 FixNamespaceComments: 'false'
 IncludeBlocks: Regroup
 IndentCaseLabels: 'true'

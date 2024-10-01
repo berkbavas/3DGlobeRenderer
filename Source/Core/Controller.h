@@ -1,17 +1,22 @@
 #pragma once
 
+#include "Core/Constants.h"
+#include "Util/Macros.h"
+
 #include <QMouseEvent>
-#include <QObject>
-#include <QOpenGLFunctions>
+#include <QOpenGLExtraFunctions>
 
 namespace GlobeRenderer
 {
-    class EventHandler;
-    class Renderer;
     class Window;
+    class Renderer;
+    class Camera;
+    class Globe;
 
-    class Controller : public QObject, protected QOpenGLFunctions
+    class Controller : public QObject, protected QOpenGLExtraFunctions
     {
+        DISABLE_COPY(Controller);
+
         Q_OBJECT
       public:
         explicit Controller(QObject* parent = nullptr);
@@ -20,24 +25,27 @@ namespace GlobeRenderer
         void Run();
 
       public slots:
+        // Core Events
         void Initialize();
         void Resize(int w, int h);
-        void Update(float ifps);
         void Render(float ifps);
-        void KeyPressed(QKeyEvent*);
-        void KeyReleased(QKeyEvent*);
-        void MousePressed(QMouseEvent*);
-        void MouseReleased(QMouseEvent*);
-        void MouseMoved(QMouseEvent*);
-        void WheelMoved(QWheelEvent*);
+
+        // Input Events
+        void OnKeyPressed(QKeyEvent*);
+        void OnKeyReleased(QKeyEvent*);
+        void OnMousePressed(QMouseEvent*);
+        void OnMouseReleased(QMouseEvent*);
+        void OnMouseMoved(QMouseEvent*);
+        void OnWheelMoved(QWheelEvent*);
 
       private:
+        float mDevicePixelRatio{ 1.0f };
+        float mWidth{ INITIAL_WIDTH };
+        float mHeight{ INITIAL_HEIGHT };
+
         Window* mWindow;
         Renderer* mRenderer;
-        EventHandler* mEventHandler;
-
-        float mDevicePixelRatio{1.0f};
-        float mWidth{1600};
-        float mHeight{900};
+        Camera* mCamera;
+        Globe* mGlobe;
     };
 }

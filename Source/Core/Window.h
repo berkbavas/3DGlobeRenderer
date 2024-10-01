@@ -1,15 +1,12 @@
 #pragma once
 
+#include <QInputEvent>
 #include <QOpenGLExtraFunctions>
-#include <QOpenGLFunctionsPrivate>
 #include <QOpenGLWindow>
-#include <QSharedPointer>
-#include <QtImGui.h>
-#include <imgui.h>
 
 namespace GlobeRenderer
 {
-    class Window : public QOpenGLWindow, protected QOpenGLExtraFunctions
+    class Window : public QOpenGLWindow, public QOpenGLExtraFunctions
     {
         Q_OBJECT
       public:
@@ -17,7 +14,7 @@ namespace GlobeRenderer
 
       private:
         void initializeGL() override;
-        void resizeGL(int w, int h) override;
+        void resizeGL(int width, int height) override;
         void paintGL() override;
         void keyPressEvent(QKeyEvent*) override;
         void keyReleaseEvent(QKeyEvent*) override;
@@ -27,10 +24,12 @@ namespace GlobeRenderer
         void wheelEvent(QWheelEvent*) override;
 
       signals:
+        // Core Events
         void Initialize();
         void Resize(int w, int h);
-        void Update(float ifps);
         void Render(float ifps);
+
+        // Input Events
         void KeyPressed(QKeyEvent*);
         void KeyReleased(QKeyEvent*);
         void MousePressed(QMouseEvent*);
@@ -42,6 +41,4 @@ namespace GlobeRenderer
         long long mPreviousTime;
         long long mCurrentTime;
     };
-
-    using WindowPtr = QSharedPointer<Window>;
 }

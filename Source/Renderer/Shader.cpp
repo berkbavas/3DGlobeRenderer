@@ -11,10 +11,8 @@ GlobeRenderer::Shader::Shader(const QString& name)
 {
 }
 
-bool GlobeRenderer::Shader::Initialize()
+void GlobeRenderer::Shader::Initialize()
 {
-    initializeOpenGLFunctions();
-
     LOG_INFO("Shader::Initialize: '{}' is being initializing.", mName.toStdString());
 
     mProgram = QSharedPointer<QOpenGLShaderProgram>(new QOpenGLShaderProgram);
@@ -24,27 +22,24 @@ bool GlobeRenderer::Shader::Initialize()
         const auto bytes = Util::GetBytes(path);
         if (!mProgram->addShaderFromSourceCode(shaderType, bytes))
         {
-
             LOG_FATAL("Shader::Initialize: '{}' could not be loaded.", GetShaderTypeString(shaderType).toStdString());
-            return false;
+            FailureBehaviour::Failure(FailureType::COULD_NOT_LOAD_SHADER);
         }
     }
 
     if (!mProgram->link())
     {
         LOG_FATAL("Shader::Initialize: Could not link shader program.");
-        return false;
+        FailureBehaviour::Failure(FailureType::COULD_NOT_LINK_SHADER);
     }
 
     if (!mProgram->bind())
     {
         LOG_FATAL("Shader::Initialize: Could not bind shader program.");
-        return false;
+        FailureBehaviour::Failure(FailureType::COULD_NOT_BIND_SHADER);
     }
 
     LOG_INFO("Shader::Initialize: '{}' has been initialized.", mName.toStdString());
-
-    return true;
 }
 
 bool GlobeRenderer::Shader::Bind()

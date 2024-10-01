@@ -1,38 +1,41 @@
 #include "Controller.h"
 
-#include "Core/EventHandler.h"
+#include "Core/Window.h"
+#include "Node/Camera/PersecutorCamera.h"
+#include "Node/Globe.h"
 #include "Renderer/Renderer.h"
-#include "Renderer/Window.h"
 #include "Util/Logger.h"
+
+#include <QtImGui.h>
+#include <imgui.h>
 
 GlobeRenderer::Controller::Controller(QObject* parent)
     : QObject(parent)
 {
-    LOG_DEBUG("Application starting...");
-
     mWindow = new Window;
-    mRenderer = new Renderer(this);
-    mEventHandler = new EventHandler(this);
-    mEventHandler->SetRenderer(mRenderer);
+    mRenderer = new Renderer;
 
     connect(mWindow, &GlobeRenderer::Window::Initialize, this, &GlobeRenderer::Controller::Initialize);
-    connect(mWindow, &GlobeRenderer::Window::Update, this, &GlobeRenderer::Controller::Update);
     connect(mWindow, &GlobeRenderer::Window::Render, this, &GlobeRenderer::Controller::Render);
     connect(mWindow, &GlobeRenderer::Window::Resize, this, &GlobeRenderer::Controller::Resize);
-    connect(mWindow, &GlobeRenderer::Window::MousePressed, this, &GlobeRenderer::Controller::MousePressed);
-    connect(mWindow, &GlobeRenderer::Window::MouseReleased, this, &GlobeRenderer::Controller::MouseReleased);
-    connect(mWindow, &GlobeRenderer::Window::MouseMoved, this, &GlobeRenderer::Controller::MouseMoved);
-    connect(mWindow, &GlobeRenderer::Window::WheelMoved, this, &GlobeRenderer::Controller::WheelMoved);
+    connect(mWindow, &GlobeRenderer::Window::MousePressed, this, &GlobeRenderer::Controller::OnMousePressed);
+    connect(mWindow, &GlobeRenderer::Window::MouseReleased, this, &GlobeRenderer::Controller::OnMouseReleased);
+    connect(mWindow, &GlobeRenderer::Window::MouseMoved, this, &GlobeRenderer::Controller::OnMouseMoved);
+    connect(mWindow, &GlobeRenderer::Window::WheelMoved, this, &GlobeRenderer::Controller::OnWheelMoved);
+    connect(mWindow, &GlobeRenderer::Window::KeyPressed, this, &GlobeRenderer::Controller::OnKeyPressed);
+    connect(mWindow, &GlobeRenderer::Window::KeyReleased, this, &GlobeRenderer::Controller::OnKeyReleased);
 }
 
 GlobeRenderer::Controller::~Controller()
 {
-    LOG_DEBUG("Application closing...");
+    LOG_DEBUG("Controller::~Controller: Application closing...");
 }
 
 void GlobeRenderer::Controller::Run()
 {
-    mWindow->resize(1600, 900);
+    LOG_DEBUG("Controller::Controller: Application starting...");
+
+    mWindow->resize(mWidth, mHeight);
     mWindow->show();
 }
 
@@ -40,92 +43,71 @@ void GlobeRenderer::Controller::Initialize()
 {
     initializeOpenGLFunctions();
 
-    mRenderer->Initialize();
-    mEventHandler->Initialize();
-}
+    QtImGui::initialize(mWindow);
 
-void GlobeRenderer::Controller::Update(float ifps)
-{
-    mDevicePixelRatio = mWindow->devicePixelRatio();
-    mEventHandler->SetDevicePixelRatio(mDevicePixelRatio);
-    mRenderer->SetDevicePixelRatio(mDevicePixelRatio);
-    mEventHandler->Update(ifps);
+    mRenderer->Initialize();
+    mCamera = mRenderer->GetCamera();
+    mGlobe = mRenderer->GetGlobe();
 }
 
 void GlobeRenderer::Controller::Render(float ifps)
 {
+    mDevicePixelRatio = mWindow->devicePixelRatio();
     mWidth = mWindow->width() * mDevicePixelRatio;
     mHeight = mWindow->height() * mDevicePixelRatio;
 
+    mRenderer->SetDevicePixelRatio(mDevicePixelRatio);
     mRenderer->Render(ifps);
 
-    QOpenGLFramebufferObject::bindDefault();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, mWidth, mHeight);
 
     QtImGui::newFrame();
 
-    ImGui::SetNextWindowSize(ImVec2(420, 420), ImGuiCond_FirstUseEver);
-
-    ImGui::Begin("Debug");
-
-    mRenderer->DrawGui();
+    mRenderer->DrawGui(ifps);
 
     ImGui::End();
     ImGui::Render();
     QtImGui::render();
 }
 
-void GlobeRenderer::Controller::KeyPressed(QKeyEvent* event)
+void GlobeRenderer::Controller::OnKeyPressed(QKeyEvent* event)
 {
+    mCamera->OnKeyPressed(event);
 }
 
-void GlobeRenderer::Controller::KeyReleased(QKeyEvent* event)
+void GlobeRenderer::Controller::OnKeyReleased(QKeyEvent* event)
 {
+    mCamera->OnKeyReleased(event);
 }
 
 void GlobeRenderer::Controller::Resize(int width, int height)
 {
+    mDevicePixelRatio = mWindow->devicePixelRatio();
     mWidth = width * mDevicePixelRatio;
     mHeight = height * mDevicePixelRatio;
 
     mWindow->makeCurrent();
-
     mRenderer->Resize(mWidth, mHeight);
     mWindow->doneCurrent();
 }
 
-void GlobeRenderer::Controller::MousePressed(QMouseEvent* event)
+void GlobeRenderer::Controller::OnMousePressed(QMouseEvent* event)
 {
-    if (ImGui::GetIO().WantCaptureMouse)
-    {
-        return;
-    }
-
-    mEventHandler->MousePressed(event);
+    mCamera->OnMousePressed(event);
 }
 
-void GlobeRenderer::Controller::MouseReleased(QMouseEvent* event)
+void GlobeRenderer::Controller::OnMouseReleased(QMouseEvent* event)
 {
-    mEventHandler->MouseReleased(event);
+    mCamera->OnMouseReleased(event);
 }
 
-void GlobeRenderer::Controller::MouseMoved(QMouseEvent* event)
+void GlobeRenderer::Controller::OnMouseMoved(QMouseEvent* event)
 {
-    if (ImGui::GetIO().WantCaptureMouse)
-    {
-        return;
-    }
-
-    mEventHandler->MouseMoved(event);
-    mRenderer->MouseMoved(event);
+    mCamera->OnMouseMoved(event);
 }
 
-void GlobeRenderer::Controller::WheelMoved(QWheelEvent* event)
+void GlobeRenderer::Controller::OnWheelMoved(QWheelEvent* event)
 {
-    if (ImGui::GetIO().WantCaptureMouse)
-    {
-        return;
-    }
-
-    mEventHandler->WheelMoved(event);
+    mCamera->OnWheelMoved(event);
 }

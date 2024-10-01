@@ -1,28 +1,27 @@
 #pragma once
 
+#include "Core/FailureBehaviour.h"
 #include "Util/Logger.h"
 
 #include <QObject>
-#include <QOpenGLFunctions>
 #include <QOpenGLShader>
-#include <QScopedPointer>
-#include <QSharedPointer>
 #include <map>
 
 namespace GlobeRenderer
 {
-    class Shader : protected QOpenGLFunctions
+    class Shader
     {
       public:
         Shader(const QString& name);
 
-        bool Initialize();
+        void Initialize();
         bool Bind();
         void Release();
 
         void AddPath(QOpenGLShader::ShaderTypeBit type, const QString& path);
 
         QString GetName() const;
+
         static QString GetShaderTypeString(QOpenGLShader::ShaderTypeBit type);
 
         template<typename T>
@@ -36,8 +35,8 @@ namespace GlobeRenderer
             }
             else
             {
-                LOG_FATAL("Shader::SetUniformValue: Location '{}' is not found.", name.toStdString());
-                std::exit(EXIT_FAILURE);
+                LOG_FATAL("Shader::SetUniformValue: Uniform location '{}' could not be found.", name.toStdString());
+                FailureBehaviour::Failure(FailureType::COULD_NOT_FIND_UNIFORM_LOCATION);
             }
         }
 
@@ -52,8 +51,8 @@ namespace GlobeRenderer
             }
             else
             {
-                LOG_FATAL("Shader::SetUniformValue: Location '{}' is not found.", name.toStdString());
-                std::exit(EXIT_FAILURE);
+                LOG_FATAL("Shader::SetUniformValue: Uniform location '{}' could not be found.", name.toStdString());
+                FailureBehaviour::Failure(FailureType::COULD_NOT_FIND_UNIFORM_LOCATION);
             }
         }
 
