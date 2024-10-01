@@ -22,7 +22,10 @@ namespace GlobeRenderer
         void Render() override;
         void Destroy() override;
 
+        void UpdateAllScale();
+
       private:
+        DEFINE_MEMBER(float, AllScale, 1.0f);
         DEFINE_MEMBER(float, Ambient, 0.5f);
         DEFINE_MEMBER(float, Diffuse, 0.75f);
         DEFINE_MEMBER(float, Specular, 0.25f);

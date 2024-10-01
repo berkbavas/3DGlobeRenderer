@@ -70,6 +70,6 @@ void GlobeRenderer::PersecutorCamera::OnWheelMoved(QWheelEvent* event)
 void GlobeRenderer::PersecutorCamera::SetTarget(Node* node)
 {
     mTarget = node;
-    // Reset();
-    // Update(0);
+    Reset();
+    Update(0);
 }

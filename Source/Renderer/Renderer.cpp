@@ -6,6 +6,8 @@
 #include "Util/Util.h"
 
 #include <QOpenGLFramebufferObject>
+#include <QtImGui.h>
+#include <imgui.h>
 
 bool GlobeRenderer::Renderer::Initialize()
 {
@@ -46,17 +48,18 @@ bool GlobeRenderer::Renderer::Initialize()
 
     mGlobe = new Globe(1, 128, 128);
     mGlobe->SetPosition(QVector3D(0, 0, 0));
+    mGlobe->RotateGlobal(QVector3D(1, 0, 0), -60);
+    mGlobe->RotateGlobal(QVector3D(0, 1, 0), 60);
+    mGlobe->RotateGlobal(QVector3D(0, 0, 1), 20);
     mGlobe->SetTexture(texture);
     mGlobe->Construct();
 
-    mCamera = new PersecutorCamera;
-    mCamera->SetDistance(3.0f);
+    mCamera = new ArcballCamera;
+    mCamera->SetPosition(0, 0, 2.0f);
     mCamera->UpdateTransformation();
     mCamera->SetVerticalFov(60.0f);
     mCamera->SetZNear(0.1f);
     mCamera->SetZFar(10000.0f);
-
-    mCamera->SetTarget(mGlobe);
 
     texture.target = GL_TEXTURE_CUBE_MAP;
     texture.id = mTextureLoader->LoadTextureCubeMap("Resources/Textures/MilkyWay", ".png");
@@ -83,6 +86,7 @@ QVector3D GlobeRenderer::Renderer::GetMouseWorldPosition(int x, int y)
 
 void GlobeRenderer::Renderer::Render(float ifps)
 {
+    mCamera->SetDevicePixelRatio(mDevicePixelRatio);
     mCamera->Update(ifps);
 
     QOpenGLFramebufferObject::bindDefault();
@@ -142,49 +146,44 @@ void GlobeRenderer::Renderer::RenderForMousePosition()
 
 void GlobeRenderer::Renderer::DrawGui(float ifps)
 {
-    // if (!ImGui::CollapsingHeader("Globe"))
-    // {
-    //     ImGui::SliderFloat("Ambient##Globe", &mGlobe->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
-    //     ImGui::SliderFloat("Diffuse##Globe", &mGlobe->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
-    //     ImGui::SliderFloat("Specular##Globe", &mGlobe->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
-    //     ImGui::SliderFloat("Shininess##Globe", &mGlobe->GetShininess_NonConst(), 1.0f, 64.0f, "%.3f");
+    if (!ImGui::CollapsingHeader("Globe"))
+    {
+        ImGui::SliderFloat("Ambient##Globe", &mGlobe->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Diffuse##Globe", &mGlobe->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Specular##Globe", &mGlobe->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Shininess##Globe", &mGlobe->GetShininess_NonConst(), 1.0f, 64.0f, "%.3f");
 
-    //     if (ImGui::SliderFloat("Scale##Globe", &(mGlobe->GetScale()[2]), 1.0f, 10.0f, "%.3f"))
-    //     {
-    //         mGlobe->UpdateTransformation();
-    //     }
+        if (ImGui::SliderFloat("Scale##Globe", &mGlobe->GetAllScale_NonConst(), 1.0f, 4.0f, "%.4f"))
+        {
+            mGlobe->UpdateAllScale();
+        }
 
-    //     ImGui::SliderFloat("Background Brightness##Globe", &mSpace->GetBrightness_NonConst(), 0.0f, 1.0f, "%.3f");
-    // }
+        ImGui::SliderFloat("Background Brightness##Globe", &mSpace->GetBrightness_NonConst(), 0.0f, 1.0f, "%.3f");
+    }
 
-    // if (!ImGui::CollapsingHeader("Sun"))
-    // {
-    //     ImGui::SliderFloat("Ambient##Sun", &mSun->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
-    //     ImGui::SliderFloat("Diffuse##Sun", &mSun->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
-    //     ImGui::SliderFloat("Specular##Sun", &mSun->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
+    if (!ImGui::CollapsingHeader("Sun"))
+    {
+        ImGui::SliderFloat("Ambient##Sun", &mSun->GetAmbient_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Diffuse##Sun", &mSun->GetDiffuse_NonConst(), 0.0f, 1.0f, "%.3f");
+        ImGui::SliderFloat("Specular##Sun", &mSun->GetSpecular_NonConst(), 0.0f, 1.0f, "%.3f");
 
-    //     auto theta = mSun->GetTheta();
-    //     auto phi = mSun->GetPhi();
-    //     ImGui::SliderFloat("Theta", &theta, -180.0f, 180.0f, "%.1f");
-    //     ImGui::SliderFloat("Phi", &phi, -90.0f, 90.0f, "%.1f");
-    //     mSun->SetDirectionFromThetaPhi(theta, phi);
-    // }
+        auto theta = mSun->GetTheta();
+        auto phi = mSun->GetPhi();
+        ImGui::SliderFloat("Theta", &theta, -179.0f, 179.0f, "%.1f");
+        ImGui::SliderFloat("Phi", &phi, -89.0f, 89.0f, "%.1f");
+        mSun->SetDirectionFromThetaPhi(theta, phi);
+    }
 
-    // if (!ImGui::CollapsingHeader("Camera"))
-    // {
-    //     if (ImGui::SliderFloat("Tilt##Camera", &mCamera->GetTilt_NonConst(), GR_MIN_TILT_ANGLE, GR_MAX_TILT_ANGLE, "%.4f"))
-    //     {
-    //         mCamera->UpdateTransformation();
-    //     }
+    if (!ImGui::CollapsingHeader("Camera"))
+    {
+        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance_NonConst(), mCamera->GetMinimumDistance(), mCamera->GetMaximumDistance(), "%.4f"))
+        {
+            mCamera->UpdateTransformation();
+        }
+    }
 
-    //     if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance(), GR_MIN_CAM_DISTANCE, GR_MAX_CAM_DISTANCE, "%.4f"))
-    //     {
-    //         mCamera->UpdateTransformation();
-    //     }
-    // }
-
-    // ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
-    // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
 void GlobeRenderer::Renderer::Resize(int width, int height)
@@ -203,7 +202,7 @@ void GlobeRenderer::Renderer::Resize(int width, int height)
     mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
 }
 
-void GlobeRenderer::Renderer::MouseMoved(QMouseEvent* event)
+void GlobeRenderer::Renderer::onMouseMoved(QMouseEvent* event)
 {
     const int x = mDevicePixelRatio * event->pos().x();
     const int y = mDevicePixelRatio * event->pos().y();

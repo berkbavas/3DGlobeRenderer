@@ -73,6 +73,7 @@ void GlobeRenderer::Controller::Render(float ifps)
 
 void GlobeRenderer::Controller::OnKeyPressed(QKeyEvent* event)
 {
+
     mCamera->OnKeyPressed(event);
 }
 
@@ -94,6 +95,11 @@ void GlobeRenderer::Controller::Resize(int width, int height)
 
 void GlobeRenderer::Controller::OnMousePressed(QMouseEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mCamera->OnMousePressed(event);
 }
 
@@ -104,10 +110,21 @@ void GlobeRenderer::Controller::OnMouseReleased(QMouseEvent* event)
 
 void GlobeRenderer::Controller::OnMouseMoved(QMouseEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mCamera->OnMouseMoved(event);
+    mRenderer->onMouseMoved(event);
 }
 
 void GlobeRenderer::Controller::OnWheelMoved(QWheelEvent* event)
 {
+    if (ImGui::GetIO().WantCaptureMouse)
+    {
+        return;
+    }
+
     mCamera->OnWheelMoved(event);
 }

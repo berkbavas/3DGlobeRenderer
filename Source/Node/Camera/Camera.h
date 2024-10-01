@@ -14,7 +14,7 @@ namespace GlobeRenderer
 
       public:
         virtual void Update(float ifps) = 0;
-        virtual void Reset() = 0;
+        virtual void Reset() {};
         virtual void Resize(int w, int h);
 
         virtual const QMatrix4x4& GetProjectionMatrix() = 0;

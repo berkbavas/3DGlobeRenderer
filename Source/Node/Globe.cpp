@@ -22,3 +22,9 @@ void GlobeRenderer::Globe::Destroy()
 {
     Sphere::Destroy();
 }
+
+void GlobeRenderer::Globe::UpdateAllScale()
+{
+    SetScale(mAllScale, mAllScale, mAllScale);
+    UpdateTransformation();
+}

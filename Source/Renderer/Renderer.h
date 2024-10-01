@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Node/Camera/PersecutorCamera.h"
+#include "Node/Camera/ArcballCamera.h"
 #include "Node/Globe.h"
 #include "Node/Space.h"
 #include "Node/Sun.h"
@@ -27,7 +27,7 @@ namespace GlobeRenderer
         void DrawGui(float ifps);
         void Resize(int w, int h);
 
-        void MouseMoved(QMouseEvent* event);
+        void onMouseMoved(QMouseEvent* event);
 
         QVector3D GetMouseWorldPosition(int x, int y);
 
@@ -44,7 +44,7 @@ namespace GlobeRenderer
         TextureLoader* mTextureLoader;
 
         DEFINE_MEMBER_PTR(Sun, Sun);
-        DEFINE_MEMBER_PTR(PersecutorCamera, Camera);
+        DEFINE_MEMBER_PTR(ArcballCamera, Camera);
         DEFINE_MEMBER_PTR(Globe, Globe);
         DEFINE_MEMBER_PTR(Space, Space);
 
