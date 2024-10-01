@@ -13,7 +13,6 @@ struct Sun
 {
     vec4 color;
     vec3 direction;
-    vec3 inverseDirection;
     float ambient;
     float diffuse;
     float specular;
