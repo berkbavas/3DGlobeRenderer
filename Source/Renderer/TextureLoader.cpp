@@ -4,7 +4,6 @@
 #include "Util/Logger.h"
 
 #include <QImage>
-#include <QOpenGLTexture>
 
 GlobeRenderer::TextureLoader::TextureLoader()
 {
@@ -15,6 +14,10 @@ GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
 {
     LOG_DEBUG("TextureLoader::LoadTexture2D: Loading texture at {}", path.toStdString());
 
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
     QImage image = QImage(path);
 
     if (image.isNull())
@@ -23,18 +26,23 @@ GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& path)
         FailureBehaviour::Failure(FailureType::COULD_NOT_LOAD_TEXTURE);
     }
 
-    QOpenGLTexture* texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    texture->setData(image);
-    texture->setWrapMode(QOpenGLTexture::WrapMode::Repeat);
-    texture->setMinMagFilters(QOpenGLTexture::Filter::LinearMipMapLinear, QOpenGLTexture::Filter::Linear);
+    image = image.convertToFormat(QImage::Format_RGBA8888);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
     LOG_DEBUG("TextureLoader::LoadTexture2D: Texture has been loaded.");
 
-    return texture->textureId();
+    return textureId;
 }
 
 GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& folder, const QString& extension)
 {
+
     GLuint textureId;
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
@@ -60,7 +68,7 @@ GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& folder, c
     {
         LOG_DEBUG("TextureLoader::LoadTextureCubeMap: Loading texture from '{}'", paths[i].toStdString());
 
-        QImage image = QImage(paths[i]).mirrored().convertToFormat(QImage::Format_RGBA8888);
+        QImage image = QImage(paths[i]);
 
         if (image.isNull())
         {
@@ -68,9 +76,12 @@ GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& folder, c
             FailureBehaviour::Failure(FailureType::COULD_NOT_LOAD_TEXTURE);
         }
 
+        image = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
+
         glTexImage2D(targets[i], 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
     }
 
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
