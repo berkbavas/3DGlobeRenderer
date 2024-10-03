@@ -53,7 +53,7 @@ namespace GlobeRenderer
 
         QOpenGLFramebufferObjectFormat mMousePositionFramebufferFormat;
         QOpenGLFramebufferObject* mMousePositionFramebuffer{ nullptr };
-        QVector4D mMousePositionOnGlobe;
+        QVector3D mMousePositionOnGlobe;
 
         DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
     };

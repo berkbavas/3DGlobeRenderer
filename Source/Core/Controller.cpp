@@ -59,14 +59,16 @@ void GlobeRenderer::Controller::Render(float ifps)
     mRenderer->SetDevicePixelRatio(mDevicePixelRatio);
     mRenderer->Render(ifps);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, mWidth, mHeight);
-
     QtImGui::newFrame();
+    ImGui::Begin("Debug");
 
     mRenderer->DrawGui(ifps);
 
     ImGui::End();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, mWidth, mHeight);
+
     ImGui::Render();
     QtImGui::render();
 }
