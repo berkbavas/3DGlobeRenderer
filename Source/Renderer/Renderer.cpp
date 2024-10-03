@@ -204,7 +204,7 @@ void GlobeRenderer::Renderer::Resize(int width, int height)
 
 void GlobeRenderer::Renderer::onMouseMoved(QMouseEvent* event)
 {
-    const int x = mDevicePixelRatio * event->pos().x();
-    const int y = mDevicePixelRatio * event->pos().y();
+    const int x = mDevicePixelRatio * event->position().x();
+    const int y = mDevicePixelRatio * event->position().y();
     mMousePositionOnGlobe = GetMouseWorldPosition(x, y);
 }

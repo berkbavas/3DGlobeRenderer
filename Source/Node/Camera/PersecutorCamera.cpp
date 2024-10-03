@@ -27,8 +27,8 @@ void GlobeRenderer::PersecutorCamera::Reset()
 
 void GlobeRenderer::PersecutorCamera::OnMousePressed(QMouseEvent* event)
 {
-    mMouse.x = event->pos().x();
-    mMouse.y = event->pos().y();
+    mMouse.x = event->position().x();
+    mMouse.y = event->position().y();
     mMouse.button = event->button();
 }
 
@@ -44,11 +44,11 @@ void GlobeRenderer::PersecutorCamera::OnMouseMoved(QMouseEvent* event)
 {
     if (mMouse.button == mActionReceiveButton)
     {
-        mMouse.dx += mMouse.x - event->pos().x();
-        mMouse.dy += mMouse.y - event->pos().y();
+        mMouse.dx += mMouse.x - event->position().x();
+        mMouse.dy += mMouse.y - event->position().y();
 
-        mMouse.x = event->pos().x();
-        mMouse.y = event->pos().y();
+        mMouse.x = event->position().x();
+        mMouse.y = event->position().y();
     }
 }
 

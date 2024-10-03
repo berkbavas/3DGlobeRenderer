@@ -64,8 +64,8 @@ void GlobeRenderer::ArcballCamera::Update(float ifps)
 
 void GlobeRenderer::ArcballCamera::OnMousePressed(QMouseEvent* event)
 {
-    mMouse.x = event->pos().x() * mDevicePixelRatio;
-    mMouse.y = event->pos().y() * mDevicePixelRatio;
+    mMouse.x = event->position().x() * mDevicePixelRatio;
+    mMouse.y = event->position().y() * mDevicePixelRatio;
     mMouse.button = event->button();
 }
 
@@ -76,8 +76,8 @@ void GlobeRenderer::ArcballCamera::OnMouseReleased(QMouseEvent* event)
 
 void GlobeRenderer::ArcballCamera::OnMouseMoved(QMouseEvent* event)
 {
-    const auto x = event->pos().x() * mDevicePixelRatio;
-    const auto y = event->pos().y() * mDevicePixelRatio;
+    const auto x = event->position().x() * mDevicePixelRatio;
+    const auto y = event->position().y() * mDevicePixelRatio;
 
     const auto ndx = (x - mMouse.x) / mWidth;
     const auto ndy = (y - mMouse.y) / mHeight;
