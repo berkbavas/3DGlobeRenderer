@@ -46,20 +46,18 @@ void GlobeRenderer::ArcballCamera::Update(float ifps)
         mDeltaRoll = 0.0f;
     }
 
-    if (!qFuzzyIsNull(mDeltaDistance))
+    if (!qFuzzyIsNull(mDeltaVerticalFov))
     {
-        const auto delta = mDeltaDistance * mLinearSpeed * ifps;
-        mDeltaDistance -= delta;
-        mDistance += delta;
+        const auto delta = mDeltaVerticalFov * mZoomSpeed * ifps;
+        mDeltaVerticalFov -= delta;
+        mVerticalFov += delta;
     }
     else
     {
-        mDeltaDistance = 0.0f;
+        mDeltaVerticalFov = 0.0f;
     }
 
-    mDistance = qBound(mMinimumDistance, mDistance, mMaximumDistance);
-
-    SetPosition(-mDistance * GetViewDirection());
+    SetPosition(-2.0 * GetViewDirection());
 }
 
 void GlobeRenderer::ArcballCamera::OnMousePressed(QMouseEvent* event)
@@ -82,12 +80,10 @@ void GlobeRenderer::ArcballCamera::OnMouseMoved(QMouseEvent* event)
     const auto ndx = (x - mMouse.x) / mWidth;
     const auto ndy = (y - mMouse.y) / mHeight;
 
-    const auto multiplier = mDistance / mMaximumDistance;
-
     if (mMouse.button == Qt::LeftButton)
     {
-        mDeltaTheta += 360 * multiplier * ndx;
-        mDeltaPhi += 180 * multiplier * ndy;
+        mDeltaTheta += GetHorizontalFov() * ndx;
+        mDeltaPhi += mVerticalFov * ndy;
     }
     else if (mMouse.button == Qt::MiddleButton)
     {
@@ -100,10 +96,5 @@ void GlobeRenderer::ArcballCamera::OnMouseMoved(QMouseEvent* event)
 
 void GlobeRenderer::ArcballCamera::OnWheelMoved(QWheelEvent* event)
 {
-    mDeltaDistance += GetAdaptiveMultiplier() * Math::Sign(event->angleDelta().y());
-}
-
-float GlobeRenderer::ArcballCamera::GetAdaptiveMultiplier() const
-{
-    return 0.01f + (mDistance - mMinimumDistance) / (mMaximumDistance - mMinimumDistance);
+    mDeltaVerticalFov += 2 * std::tan(qDegreesToRadians(mVerticalFov)) * Math::Sign(event->angleDelta().y());
 }

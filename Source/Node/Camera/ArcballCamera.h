@@ -17,8 +17,6 @@ namespace GlobeRenderer
         void OnMouseMoved(QMouseEvent* event) override;
         void OnWheelMoved(QWheelEvent* event) override;
 
-        float GetAdaptiveMultiplier() const;
-
       private:
         Mouse mMouse;
 
@@ -26,16 +24,13 @@ namespace GlobeRenderer
         float mDeltaTheta{ 0 };
         float mDeltaRoll{ 0 };
 
-        float mDeltaDistance{ 0 };
+        float mDeltaVerticalFov{ 0 };
 
-        DEFINE_MEMBER(float, Distance, 5.0f);
         DEFINE_MEMBER(float, WheelStep, 0.5f);
         DEFINE_MEMBER(float, AngularSpeed, 10.0f);
-        DEFINE_MEMBER(float, LinearSpeed, 8.0f);
+        DEFINE_MEMBER(float, ZoomSpeed, 10.0f);
         DEFINE_MEMBER(Qt::MouseButton, ActionReceiveButton, Qt::LeftButton)
-        DEFINE_MEMBER(float, MinimumDistance, 1.25f);
-        DEFINE_MEMBER(float, MaximumDistance, 10.0f);
-        DEFINE_MEMBER(float, DevicePixelRatio, 1.0f)
+        DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
     };
 
     using ArcballCameraPtr = QSharedPointer<ArcballCamera>;

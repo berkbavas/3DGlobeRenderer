@@ -174,13 +174,13 @@ void GlobeRenderer::Renderer::DrawGui(float ifps)
         mSun->SetDirectionFromThetaPhi(theta, phi);
     }
 
-    if (ImGui::CollapsingHeader("Camera"))
-    {
-        if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance_NonConst(), mCamera->GetMinimumDistance(), mCamera->GetMaximumDistance(), "%.4f"))
-        {
-            mCamera->UpdateTransformation();
-        }
-    }
+    // if (ImGui::CollapsingHeader("Camera"))
+    // {
+    //     if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance_NonConst(), mCamera->GetMinimumDistance(), mCamera->GetMaximumDistance(), "%.4f"))
+    //     {
+    //         mCamera->UpdateTransformation();
+    //     }
+    // }
 
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

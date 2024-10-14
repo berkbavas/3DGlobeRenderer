@@ -9,7 +9,7 @@ const QMatrix4x4& GlobeRenderer::PerspectiveCamera::GetProjectionMatrix()
 
 float GlobeRenderer::PerspectiveCamera::GetHorizontalFov() const
 {
-    const auto hfov = qAtan(qTan(mVerticalFov / 2.0) / GetAspectRatio()) * 2.0f;
+    const auto hfov = std::atan(std::tan(qDegreesToRadians(0.5 * mVerticalFov)) * GetAspectRatio()) * 2.0f;
 
-    return qAbs(qRadiansToDegrees(hfov));
+    return qRadiansToDegrees(hfov);
 }
