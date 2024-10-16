@@ -48,14 +48,11 @@ void GlobeRenderer::ArcballCamera::Update(float ifps)
 
     if (!qFuzzyIsNull(mDeltaVerticalFov))
     {
-        const auto delta = mDeltaVerticalFov * mZoomSpeed * ifps;
-        mDeltaVerticalFov -= delta;
-        mVerticalFov += delta;
+        mVerticalFov += mDeltaVerticalFov * 0.075;
+        mDeltaVerticalFov = mDeltaVerticalFov * 0.925;
     }
-    else
-    {
-        mDeltaVerticalFov = 0.0f;
-    }
+
+    mVerticalFov = qBound(1.0f, mVerticalFov, 120.0f);
 
     SetPosition(-2.0 * GetViewDirection());
 }
@@ -96,5 +93,5 @@ void GlobeRenderer::ArcballCamera::OnMouseMoved(QMouseEvent* event)
 
 void GlobeRenderer::ArcballCamera::OnWheelMoved(QWheelEvent* event)
 {
-    mDeltaVerticalFov += 2 * std::tan(qDegreesToRadians(mVerticalFov)) * Math::Sign(event->angleDelta().y());
+    mDeltaVerticalFov += Math::Sign(event->angleDelta().y()) * mVerticalFov * 0.075;
 }

@@ -6,5 +6,7 @@
         <file>Resources/Shaders/MousePosition.vert</file>
         <file>Resources/Shaders/Space.frag</file>
         <file>Resources/Shaders/Space.vert</file>
+        <file>Resources/Shaders/Combine.frag</file>
+        <file>Resources/Shaders/Quad.vert</file>
     </qresource>
 </RCC>

@@ -15,6 +15,8 @@ void GlobeRenderer::Shader::Initialize()
 {
     LOG_INFO("Shader::Initialize: '{}' is being initializing.", mName.toStdString());
 
+    initializeOpenGLFunctions();
+
     mProgram = QSharedPointer<QOpenGLShaderProgram>(new QOpenGLShaderProgram);
 
     for (const auto [shaderType, path] : mPaths)
@@ -81,4 +83,11 @@ QString GlobeRenderer::Shader::GetShaderTypeString(QOpenGLShader::ShaderTypeBit 
         default:
             return "Unknown Shader";
     }
+}
+
+void GlobeRenderer::Shader::SetSampler(const QString& name, GLuint unit, GLuint textureId, GLuint target)
+{
+    SetUniformValue(name, unit);
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(target, textureId);
 }

@@ -15,6 +15,13 @@ bool GlobeRenderer::Renderer::Initialize()
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
 
+    mQuad = new Quad;
+
+    mCombineShader = new Shader("Combine Shader");
+    mCombineShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Quad.vert");
+    mCombineShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Combine.frag");
+    mCombineShader->Initialize();
+
     mGlobeShader = new Shader("Globe Shader");
     mGlobeShader->AddPath(QOpenGLShader::Vertex, ":/Resources/Shaders/Basic.vert");
     mGlobeShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Basic.frag");
@@ -30,11 +37,25 @@ bool GlobeRenderer::Renderer::Initialize()
     mSpaceShader->AddPath(QOpenGLShader::Fragment, ":/Resources/Shaders/Space.frag");
     mSpaceShader->Initialize();
 
-    mMousePositionFramebufferFormat.setSamples(0);
-    mMousePositionFramebufferFormat.setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
-    mMousePositionFramebufferFormat.setInternalTextureFormat(GL_RGBA32F);
+    mFramebufferFormats.resize(3);
+    mFramebuffers = QVector<QOpenGLFramebufferObject*>(3, nullptr);
 
-    mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
+    mFramebufferFormats[DEFAULT].setSamples(8);
+    mFramebufferFormats[DEFAULT].setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
+    mFramebufferFormats[DEFAULT].setInternalTextureFormat(GL_RGBA32F);
+
+    mFramebufferFormats[MOUSE_POSITION].setSamples(0);
+    mFramebufferFormats[MOUSE_POSITION].setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
+    mFramebufferFormats[MOUSE_POSITION].setInternalTextureFormat(GL_RGBA32F);
+
+    mFramebufferFormats[TEMP].setSamples(0);
+    mFramebufferFormats[TEMP].setAttachment(QOpenGLFramebufferObject::Attachment::NoAttachment);
+    mFramebufferFormats[TEMP].setInternalTextureFormat(GL_RGBA32F);
+
+    for (FramebufferType type : { DEFAULT, MOUSE_POSITION, TEMP })
+    {
+        mFramebuffers[type] = new QOpenGLFramebufferObject(mWidth, mHeight, mFramebufferFormats[type]);
+    }
 
     mSun = new Sun;
 
@@ -78,9 +99,9 @@ bool GlobeRenderer::Renderer::Initialize()
 QVector3D GlobeRenderer::Renderer::GetMouseWorldPosition(int x, int y)
 {
     QVector3D position;
-    mMousePositionFramebuffer->bind();
-    glReadPixels(x, mMousePositionFramebuffer->height() - y, 1, 1, GL_RGBA, GL_FLOAT, &position);
-    mMousePositionFramebuffer->release();
+    mFramebuffers[MOUSE_POSITION]->bind();
+    glReadPixels(x, mFramebuffers[MOUSE_POSITION]->height() - y, 1, 1, GL_RGBA, GL_FLOAT, &position);
+    mFramebuffers[MOUSE_POSITION]->release();
     return position;
 }
 
@@ -89,7 +110,7 @@ void GlobeRenderer::Renderer::Render(float ifps)
     mCamera->SetDevicePixelRatio(mDevicePixelRatio);
     mCamera->Update(ifps);
 
-    QOpenGLFramebufferObject::bindDefault();
+    mFramebuffers[DEFAULT]->bind();
     glViewport(0, 0, mWidth, mHeight);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,6 +118,29 @@ void GlobeRenderer::Renderer::Render(float ifps)
     RenderSpace();
     RenderGlobe();
     RenderForMousePosition();
+
+    for (int index = 0; index < 2; index++)
+    {
+        QOpenGLFramebufferObject::blitFramebuffer(mFramebuffers[TEMP],
+                                                  QRect(0, 0, mFramebuffers[TEMP]->width(), mFramebuffers[TEMP]->height()),
+                                                  mFramebuffers[DEFAULT],
+                                                  QRect(0, 0, mFramebuffers[DEFAULT]->width(), mFramebuffers[DEFAULT]->height()),
+                                                  GL_COLOR_BUFFER_BIT,
+                                                  GL_LINEAR,
+                                                  index,
+                                                  index);
+    }
+
+    QOpenGLFramebufferObject::bindDefault();
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mCombineShader->Bind();
+    mCombineShader->SetSampler("colorTexture", 0, mFramebuffers[TEMP]->textures().at(0));
+    mCombineShader->SetSampler("velocityTexture", 1, mFramebuffers[TEMP]->textures().at(1));
+    mQuad->Render();
+    mCombineShader->Release();
+
+    mPreviousViewProjectionMatrix = mCamera->GetViewProjectionMatrix();
 }
 
 void GlobeRenderer::Renderer::RenderSpace()
@@ -113,6 +157,7 @@ void GlobeRenderer::Renderer::RenderSpace()
 void GlobeRenderer::Renderer::RenderGlobe()
 {
     mGlobeShader->Bind();
+    mGlobeShader->SetUniformValue("previousViewProjectionMatrix", mPreviousViewProjectionMatrix);
     mGlobeShader->SetUniformValue("modelMatrix", mGlobe->GetTransformation());
     mGlobeShader->SetUniformValue("normalMatrix", mGlobe->GetTransformation().normalMatrix());
     mGlobeShader->SetUniformValue("viewProjectionMatrix", mCamera->GetViewProjectionMatrix());
@@ -133,7 +178,7 @@ void GlobeRenderer::Renderer::RenderGlobe()
 
 void GlobeRenderer::Renderer::RenderForMousePosition()
 {
-    mMousePositionFramebuffer->bind();
+    mFramebuffers[MOUSE_POSITION]->bind();
     glViewport(0, 0, mWidth, mHeight);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -141,7 +186,7 @@ void GlobeRenderer::Renderer::RenderForMousePosition()
     mMousePositionShader->SetUniformValue("MVP", mCamera->GetViewProjectionMatrix() * mGlobe->GetTransformation());
     mGlobe->Render();
     mMousePositionShader->Release();
-    mMousePositionFramebuffer->release();
+    mFramebuffers[MOUSE_POSITION]->release();
 }
 
 void GlobeRenderer::Renderer::DrawGui(float ifps)
@@ -193,13 +238,22 @@ void GlobeRenderer::Renderer::Resize(int width, int height)
 
     mCamera->Resize(mWidth, mHeight);
 
-    if (mMousePositionFramebuffer)
-    {
-        delete mMousePositionFramebuffer;
-        mMousePositionFramebuffer = nullptr;
-    }
+    constexpr GLuint ATTACHMENTS[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 
-    mMousePositionFramebuffer = new QOpenGLFramebufferObject(mWidth, mHeight, mMousePositionFramebufferFormat);
+    for (FramebufferType type : { DEFAULT, MOUSE_POSITION, TEMP })
+    {
+        if (mFramebuffers[type])
+        {
+            delete mFramebuffers[type];
+        }
+
+        mFramebuffers[type] = new QOpenGLFramebufferObject(mWidth, mHeight, mFramebufferFormats[type]);
+
+        mFramebuffers[type]->addColorAttachment(mWidth, mHeight, GL_RGB32F);
+        mFramebuffers[type]->bind();
+        glDrawBuffers(2, ATTACHMENTS);
+        mFramebuffers[type]->release();
+    }
 }
 
 void GlobeRenderer::Renderer::onMouseMoved(QMouseEvent* event)

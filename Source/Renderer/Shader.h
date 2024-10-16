@@ -4,12 +4,13 @@
 #include "Util/Logger.h"
 
 #include <QObject>
+#include <QOpenGLExtraFunctions>
 #include <QOpenGLShader>
 #include <map>
 
 namespace GlobeRenderer
 {
-    class Shader
+    class Shader : protected QOpenGLExtraFunctions
     {
       public:
         Shader(const QString& name);
@@ -35,7 +36,7 @@ namespace GlobeRenderer
             }
             else
             {
-                LOG_FATAL("Shader::SetUniformValue: Uniform location '{}' could not be found.", name.toStdString());
+                LOG_FATAL("Shader::SetUniformValue: [{}] Uniform location '{}' could not be found.", mName.toStdString(), name.toStdString());
                 FailureBehaviour::Failure(FailureType::COULD_NOT_FIND_UNIFORM_LOCATION);
             }
         }
@@ -55,6 +56,8 @@ namespace GlobeRenderer
                 FailureBehaviour::Failure(FailureType::COULD_NOT_FIND_UNIFORM_LOCATION);
             }
         }
+
+        void SetSampler(const QString& name, GLuint unit, GLuint textureId, GLuint target = GL_TEXTURE_2D);
 
       private:
         QSharedPointer<QOpenGLShaderProgram> mProgram;

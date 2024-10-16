@@ -28,7 +28,6 @@ namespace GlobeRenderer
 
         DEFINE_MEMBER(float, WheelStep, 0.5f);
         DEFINE_MEMBER(float, AngularSpeed, 10.0f);
-        DEFINE_MEMBER(float, ZoomSpeed, 10.0f);
         DEFINE_MEMBER(Qt::MouseButton, ActionReceiveButton, Qt::LeftButton)
         DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
     };

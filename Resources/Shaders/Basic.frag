@@ -21,12 +21,15 @@ struct Sun
 uniform Globe globe;
 uniform Sun sun;
 uniform vec3 cameraPosition;
+uniform mat4 previousViewProjectionMatrix;
+uniform mat4 viewProjectionMatrix;
 
 in vec4 fs_Position;
 in vec2 fs_TextureCoords;
 in vec3 fs_Normal;
 
-out vec4 outColor;
+layout(location = 0) out vec4 out_Color;
+layout(location = 1) out vec4 out_Velocity;
 
 void main()
 {
@@ -39,5 +42,16 @@ void main()
     vec3 halfwayDirection = normalize(sun.direction + viewDirection);
     float specular = pow(max(dot(fs_Normal, halfwayDirection), 0.0), globe.shininess) * globe.specular * sun.specular;
 
-    outColor = (ambient + diffuse + specular) * sun.color * texture(globe.texture, fs_TextureCoords);
+    out_Color = (ambient + diffuse + specular) * sun.color * texture(globe.texture, fs_TextureCoords);
+
+    vec4 prevProj = previousViewProjectionMatrix * fs_Position;
+    prevProj /= prevProj.w;
+
+    vec4 currProj = viewProjectionMatrix * fs_Position;
+    currProj /= currProj.w;
+
+    float dx = currProj.x - prevProj.x;
+    float dy = currProj.y - prevProj.y;
+
+    out_Velocity = vec4(dx, dy, 0, 0);
 }

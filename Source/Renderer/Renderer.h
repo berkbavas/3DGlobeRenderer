@@ -4,17 +4,19 @@
 #include "Node/Globe.h"
 #include "Node/Space.h"
 #include "Node/Sun.h"
+#include "Renderer/Quad.h"
 #include "Renderer/Shader.h"
 #include "Renderer/TextureLoader.h"
 
 #include <QMouseEvent>
+#include <QOpenGLExtraFunctions>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLFramebufferObjectFormat>
-#include <QOpenGLFunctions>
+#include <QVector>
 
 namespace GlobeRenderer
 {
-    class Renderer : protected QOpenGLFunctions
+    class Renderer : protected QOpenGLExtraFunctions
     {
         DISABLE_COPY(Renderer);
 
@@ -31,6 +33,13 @@ namespace GlobeRenderer
 
         QVector3D GetMouseWorldPosition(int x, int y);
 
+        enum FramebufferType
+        {
+            DEFAULT,
+            TEMP,
+            MOUSE_POSITION,
+        };
+
       private:
         void RenderSpace();
         void RenderGlobe();
@@ -40,6 +49,7 @@ namespace GlobeRenderer
         Shader* mGlobeShader;
         Shader* mMousePositionShader;
         Shader* mSpaceShader;
+        Shader* mCombineShader; // Here we output blurred texture to the default framebuffer
 
         TextureLoader* mTextureLoader;
 
@@ -51,9 +61,14 @@ namespace GlobeRenderer
         float mWidth{ INITIAL_WIDTH };
         float mHeight{ INITIAL_HEIGHT };
 
-        QOpenGLFramebufferObjectFormat mMousePositionFramebufferFormat;
-        QOpenGLFramebufferObject* mMousePositionFramebuffer{ nullptr };
+        QVector<QOpenGLFramebufferObjectFormat> mFramebufferFormats;
+        QVector<QOpenGLFramebufferObject*> mFramebuffers;
+
         QVector3D mMousePositionOnGlobe;
+
+        Quad* mQuad;
+
+        QMatrix4x4 mPreviousViewProjectionMatrix;
 
         DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
     };
