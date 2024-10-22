@@ -10,9 +10,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(INCLUDE_DIR     Libs/qtimgui/include)
+set(INCLUDE_DIR Libs/qtimgui/include)
 
-set(LIBS_DIR        Libs/qtimgui/lib)
+set(LIBS_DIR    Libs/qtimgui/lib)
 
 set(LIBS    debug   debug/imgui             optimized release/imgui
             debug   debug/qt_imgui_widgets  optimized release/qt_imgui_widgets)
@@ -31,11 +31,14 @@ add_executable(3DGlobeRenderer ${SOURCES})
 
 target_link_libraries(3DGlobeRenderer Qt6::Core Qt6::Widgets Qt6::OpenGL ${LIBS})
 
-add_custom_command(TARGET 3DGlobeRenderer 
-POST_BUILD COMMAND xcopy /E /Y "\"$(SolutionDir)../Resources\"" "\"$(OutDir)Resources/*\"")
-
 add_custom_command(TARGET 3DGlobeRenderer
-POST_BUILD COMMAND xcopy /E /Y  "\"$(SolutionDir)../Resources\"" "\"$(BuildDir)Resources/*\"")
-
-add_custom_command(TARGET 3DGlobeRenderer 
-POST_BUILD COMMAND "$ENV{Qt6_DIR}/bin/windeployqt.exe" "\"$(OutDir)$(TargetName)$(TargetExt)\"")
+    POST_BUILD COMMAND ${CMAKE_COMMAND}
+    -E copy_directory
+    "${CMAKE_SOURCE_DIR}/Resources/"
+    "$<TARGET_FILE_DIR:3DGlobeRenderer>/Resources/")
+	
+add_custom_command(TARGET 3DGlobeRenderer
+    POST_BUILD COMMAND
+    Qt6::windeployqt 
+    --dir "$<TARGET_FILE_DIR:3DGlobeRenderer>" 
+    "$<TARGET_FILE_DIR:3DGlobeRenderer>/$<TARGET_FILE_NAME:3DGlobeRenderer>")
