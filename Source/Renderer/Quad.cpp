@@ -4,14 +4,12 @@ GlobeRenderer::Quad::Quad()
 {
     initializeOpenGLFunctions();
 
-    constexpr float VERTICES[24] = {
-        -1.0f, +1.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        +1.0f, -1.0f, 1.0f, 0.0f,
-        -1.0f, +1.0f, 0.0f, 1.0f,
-        +1.0f, -1.0f, 1.0f, 0.0f,
-        +1.0f, +1.0f, 1.0f, 1.0f
-    };
+    constexpr float VERTICES[24] = {-1.0f, +1.0f, 0.0f, 1.0f, //
+                                    -1.0f, -1.0f, 0.0f, 0.0f, //
+                                    +1.0f, -1.0f, 1.0f, 0.0f, //
+                                    -1.0f, +1.0f, 0.0f, 1.0f, //
+                                    +1.0f, -1.0f, 1.0f, 0.0f, //
+                                    +1.0f, +1.0f, 1.0f, 1.0f};
 
     glGenVertexArrays(1, &mVertexArray);
     glBindVertexArray(mVertexArray);

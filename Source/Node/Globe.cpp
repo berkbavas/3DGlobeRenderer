@@ -1,8 +1,5 @@
 #include "Globe.h"
 
-#include "Util/Logger.h"
-#include "Util/Util.h"
-
 void GlobeRenderer::Globe::Construct()
 {
     Sphere::Construct();

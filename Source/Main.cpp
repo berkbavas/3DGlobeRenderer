@@ -9,9 +9,8 @@ int main(int argc, char* argv[])
 
     QImageReader::setAllocationLimit(0);
 
-    GlobeRenderer::Controller* controller = new GlobeRenderer::Controller;
-
-    controller->Run();
+    GlobeRenderer::Controller controller;
+    controller.Run();
 
     return app.exec();
 }

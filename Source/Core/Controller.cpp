@@ -1,8 +1,6 @@
 #include "Controller.h"
 
 #include "Core/Window.h"
-#include "Node/Camera/PersecutorCamera.h"
-#include "Node/Globe.h"
 #include "Renderer/Renderer.h"
 #include "Util/Logger.h"
 

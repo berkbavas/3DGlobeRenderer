@@ -14,8 +14,7 @@ GlobeRenderer::Window::Window(QWindow* parent)
     format.setSamples(4);
     setFormat(format);
 
-    connect(this, &QOpenGLWindow::frameSwapped, [=]()
-            { update(); });
+    connect(this, &QOpenGLWindow::frameSwapped, [this]() { update(); });
 }
 
 void GlobeRenderer::Window::initializeGL()

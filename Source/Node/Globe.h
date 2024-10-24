@@ -6,7 +6,6 @@
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLTexture>
 #include <QVector>
-#include <map>
 
 namespace GlobeRenderer
 {
