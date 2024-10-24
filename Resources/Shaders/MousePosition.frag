@@ -6,7 +6,7 @@ out vec3 out_Position;
 
 void main()
 {
-    float latitude = 180.0f * (fs_TextureCoords.t - 0.5f);
+    float latitude = 180.0f * (0.5f - fs_TextureCoords.t);
     float longitude = 360.0f * (fs_TextureCoords.s - 0.5f);
     out_Position = vec3(latitude, longitude, 0);
 }
