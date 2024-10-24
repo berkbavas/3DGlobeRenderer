@@ -71,5 +71,7 @@ namespace GlobeRenderer
         QMatrix4x4 mPreviousViewProjectionMatrix;
 
         DEFINE_MEMBER(float, DevicePixelRatio, 1.0f);
+
+        int mNumberOfSamples{ 2 };
     };
 }

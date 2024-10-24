@@ -4,7 +4,7 @@ in vec2 fs_TextureCoords;
 
 uniform sampler2D colorTexture;
 uniform sampler2D velocityTexture;
-uniform int numberOfSamples = 3;
+uniform int numberOfSamples;
 
 layout(location = 0) out vec4 out_Color;
 

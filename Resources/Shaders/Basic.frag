@@ -44,6 +44,7 @@ void main()
 
     out_Color = (ambient + diffuse + specular) * sun.color * texture(globe.texture, fs_TextureCoords);
 
+    // Velocity
     vec4 prevProj = previousViewProjectionMatrix * fs_Position;
     prevProj /= prevProj.w;
 

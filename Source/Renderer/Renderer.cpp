@@ -1,12 +1,9 @@
 #include "Renderer.h"
 
-#include "Core/Constants.h"
-#include "Util/Logger.h"
-#include "Util/Math.h"
-#include "Util/Util.h"
-
 #include <QOpenGLFramebufferObject>
 #include <QtImGui.h>
+
+#include "Util/Logger.h"
 #include <imgui.h>
 
 bool GlobeRenderer::Renderer::Initialize()
@@ -121,20 +118,22 @@ void GlobeRenderer::Renderer::Render(float ifps)
 
     for (int index = 0; index < 2; index++)
     {
-        QOpenGLFramebufferObject::blitFramebuffer(mFramebuffers[TEMP],
-                                                  QRect(0, 0, mFramebuffers[TEMP]->width(), mFramebuffers[TEMP]->height()),
-                                                  mFramebuffers[DEFAULT],
-                                                  QRect(0, 0, mFramebuffers[DEFAULT]->width(), mFramebuffers[DEFAULT]->height()),
-                                                  GL_COLOR_BUFFER_BIT,
-                                                  GL_LINEAR,
-                                                  index,
-                                                  index);
+        QOpenGLFramebufferObject::blitFramebuffer(
+            mFramebuffers[TEMP],
+            QRect(0, 0, mFramebuffers[TEMP]->width(), mFramebuffers[TEMP]->height()),
+            mFramebuffers[DEFAULT],
+            QRect(0, 0, mFramebuffers[DEFAULT]->width(), mFramebuffers[DEFAULT]->height()),
+            GL_COLOR_BUFFER_BIT,
+            GL_LINEAR,
+            index,
+            index);
     }
 
     QOpenGLFramebufferObject::bindDefault();
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mCombineShader->Bind();
+    mCombineShader->SetUniformValue("numberOfSamples", mNumberOfSamples);
     mCombineShader->SetSampler("colorTexture", 0, mFramebuffers[TEMP]->textures().at(0));
     mCombineShader->SetSampler("velocityTexture", 1, mFramebuffers[TEMP]->textures().at(1));
     mQuad->Render();
@@ -219,6 +218,11 @@ void GlobeRenderer::Renderer::DrawGui(float ifps)
         mSun->SetDirectionFromThetaPhi(theta, phi);
     }
 
+    if (ImGui::CollapsingHeader("Renderer"))
+    {
+        ImGui::SliderInt("Number of Samples for Motion Blur##Renderer", &mNumberOfSamples, 1, 8);
+    }
+
     // if (ImGui::CollapsingHeader("Camera"))
     // {
     //     if (ImGui::SliderFloat("Distance##Camera", &mCamera->GetDistance_NonConst(), mCamera->GetMinimumDistance(), mCamera->GetMaximumDistance(), "%.4f"))
@@ -228,6 +232,7 @@ void GlobeRenderer::Renderer::DrawGui(float ifps)
     // }
 
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "Latitude: %.6f, Longitude: %.6f)", mMousePositionOnGlobe[0], mMousePositionOnGlobe[1]);
+
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
