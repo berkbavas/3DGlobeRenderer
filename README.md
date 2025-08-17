@@ -2,8 +2,6 @@
 
 **3D Globe Renderer** is a C++ application for rendering interactive 3D globes, built with OpenGL and Qt.
 
----
-
 ## Project Structure
 
 ```text
@@ -22,15 +20,11 @@
 └── README.md         # Project documentation
 ```
 
----
-
 ## Prerequisites
 
 - **CMake** >= 3.25.1
 - **Visual Studio 2022** with MSVC C++ v143 Compiler
 - **Qt 6.7.3** (MSVC2022 64bit)
-
----
 
 ## Setup Instructions
 
@@ -63,14 +57,10 @@
 6. Open `3DGlobeRenderer.sln` in Visual Studio 2022.
 7. Build and run the project in **Release** configuration.
 
----
-
 ## Demo
 
 Watch a demo video:  
 [3D Globe Renderer Demo](https://github.com/user-attachments/assets/4df2122d-be62-48bf-8dea-97887d2e4332)
-
----
 
 ## License
 
