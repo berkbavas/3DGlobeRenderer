@@ -49,7 +49,6 @@ namespace GlobeRenderer
         Texture CreateGlobeTexture() const;
         QVector3D GetMouseWorldPosition(int X, int Y);
         void RenderImGui();
-        void RenderDebugInfo();
 
         QVector<EventReceiver*> mEventReceivers;
 
