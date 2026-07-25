@@ -44,8 +44,8 @@ layout(location = 1) out vec4 oGeodeticPosition;
 
 void main()
 {
-    vec3 Lighting = ProcessLighting();
-    vec4 TextureColor = texture(uGlobe.Texture, fsTextureCoords);
+    const vec3 Lighting = ProcessLighting();
+    const vec4 TextureColor = texture(uGlobe.Texture, fsTextureCoords);
     oColor = vec4(Lighting, 1.0f) * TextureColor;
 
     const float Latitude = 180.0f * (0.5f - fsTextureCoords.t);
