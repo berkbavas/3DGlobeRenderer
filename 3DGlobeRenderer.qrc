@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/Shaders/Globe.frag</file>
+        <file>Resources/Shaders/Space.frag</file>
+        <file>Resources/Shaders/Globe.vert</file>
+        <file>Resources/Shaders/Space.vert</file>
+        <file>Resources/Shaders/Quad.vert</file>
+        <file>Resources/Shaders/Screen.frag</file>
+    </qresource>
+</RCC>
