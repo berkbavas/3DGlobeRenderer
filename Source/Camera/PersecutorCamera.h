@@ -10,26 +10,26 @@ namespace GlobeRenderer
       public:
         PersecutorCamera() = default;
 
-        bool OnMousePressed(QMouseEvent *) override;
-        bool OnMouseReleased(QMouseEvent *) override;
-        bool OnMouseMoved(QMouseEvent *) override;
-        bool OnWheelMoved(QWheelEvent *) override;
-        bool OnLeaveEvent(QEvent *) override;
+        bool OnMousePressed(QMouseEvent* pEvent) override;
+        bool OnMouseReleased(QMouseEvent* pEvent) override;
+        bool OnMouseMoved(QMouseEvent* pEvent) override;
+        bool OnWheelMoved(QWheelEvent* pEvent) override;
+        bool OnLeaveEvent(QEvent* pEvent) override;
         void Update(float Ifps) override;
         void Reset() override;
 
-        Node *GetTarget() const;
-        void SetTarget(Node *pNewTarget);
+        Node* GetTarget() const;
+        void SetTarget(Node* pNewTarget);
 
       private:
         void ClampAngles();
         bool ShouldIgnoreEvents() const;
-        void HandleZoom(float ifps);
-        void HandleRotation(float ifps);
-        void HandleTranslation(float ifps);
+        void HandleZoom(float Ifps);
+        void HandleRotation(float Ifps);
+        void HandleTranslation(float Ifps);
 
         // Internal state
-        Node *mTarget{ nullptr };
+        Node* mTarget{ nullptr };
         Mouse mMouse;
         float mDistanceBuffer{ 0.0f };
         QVector3D mTranslation;

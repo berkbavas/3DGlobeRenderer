@@ -20,9 +20,9 @@ QByteArray GlobeRenderer::Util::GetBytes(const QString& Path)
     }
 }
 
-QVector3D GlobeRenderer::Util::GenerateRandomVector(float x, float y, float z)
+QVector3D GlobeRenderer::Util::GenerateRandomVector(float X, float Y, float Z)
 {
-    return QVector3D(GenerateRandom(x), GenerateRandom(y), GenerateRandom(z));
+    return QVector3D(GenerateRandom(X), GenerateRandom(Y), GenerateRandom(Z));
 }
 
 float GlobeRenderer::Util::GenerateRandom(float Bound)

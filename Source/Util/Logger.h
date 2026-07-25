@@ -26,36 +26,13 @@ namespace GlobeRenderer
       public:
         Logger() = delete;
 
-        static void Log(LogLevel Level, const std::string& LogMessage);
+        static void Log(LogLevel LogLevel, const std::string& LogMessage);
         static void SetLogLevel(LogLevel LogLevel);
-        static bool isLogEnabledFor(LogLevel Level);
+        static bool IsLogEnabledFor(LogLevel LogLevel);
         static LogLevel GetLogLevel();
         static std::string GetTimeString();
-
         static void QtMessageOutputCallback(QtMsgType Type, const QMessageLogContext& Context, const QString& LogMessage);
-
-        inline static std::string GetLogLevelString(LogLevel LogLevel)
-        {
-            switch (LogLevel)
-            {
-            case LogLevel::ALL:
-                return "ALL";
-            case LogLevel::NONE:
-                return "NONE";
-            case LogLevel::TRACE:
-                return "TRACE";
-            case LogLevel::DEBUG:
-                return "DEBUG";
-            case LogLevel::INFO:
-                return "INFO";
-            case LogLevel::WARNING:
-                return "WARN";
-            case LogLevel::FATAL:
-                return "FATAL";
-            default:
-                return "N/A";
-            }
-        }
+        static std::string GetLogLevelString(LogLevel LogLevel);
 
       private:
         static LogLevel mLogLevel;
@@ -66,7 +43,7 @@ namespace GlobeRenderer
 #define LOG_PRIVATE(LEVEL, FORMAT, ...) \
     do \
     { \
-        if (GlobeRenderer::Logger::isLogEnabledFor(LEVEL)) \
+        if (GlobeRenderer::Logger::IsLogEnabledFor(LEVEL)) \
         { \
             GlobeRenderer::Logger::Log(LEVEL, std::format(FORMAT, __VA_ARGS__)); \
         } \

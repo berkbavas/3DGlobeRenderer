@@ -38,14 +38,14 @@ void GlobeRenderer::Node::SetTransformation(const QMatrix4x4& NewTransformation)
     mNormalMatrix = mTransformation.normalMatrix();
 }
 
-void GlobeRenderer::Node::SetPosition(float x, float y, float z)
+void GlobeRenderer::Node::SetPosition(float X, float Y, float Z)
 {
-    SetPosition(QVector3D(x, y, z));
+    SetPosition(QVector3D(X, Y, Z));
 }
 
-void GlobeRenderer::Node::SetScale(float x, float y, float z)
+void GlobeRenderer::Node::SetScale(float X, float Y, float Z)
 {
-    SetScale(QVector3D(x, y, z));
+    SetScale(QVector3D(X, Y, Z));
 }
 
 void GlobeRenderer::Node::SetScale(float UniformScale)

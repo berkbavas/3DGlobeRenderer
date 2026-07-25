@@ -68,7 +68,30 @@ void GlobeRenderer::Logger::QtMessageOutputCallback(QtMsgType Type, const QMessa
     }
 }
 
-bool GlobeRenderer::Logger::isLogEnabledFor(LogLevel LogLevel)
+std::string GlobeRenderer::Logger::GetLogLevelString(LogLevel LogLevel)
+{
+    switch (LogLevel)
+    {
+    case LogLevel::ALL:
+        return "ALL";
+    case LogLevel::NONE:
+        return "NONE";
+    case LogLevel::TRACE:
+        return "TRACE";
+    case LogLevel::DEBUG:
+        return "DEBUG";
+    case LogLevel::INFO:
+        return "INFO";
+    case LogLevel::WARNING:
+        return "WARN";
+    case LogLevel::FATAL:
+        return "FATAL";
+    default:
+        return "N/A";
+    }
+}
+
+bool GlobeRenderer::Logger::IsLogEnabledFor(LogLevel LogLevel)
 {
     return mLogLevel <= LogLevel;
 }
