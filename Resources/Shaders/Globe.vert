@@ -7,10 +7,13 @@ layout(location = 2) in vec2 aTextureCoords;
 uniform mat4 uModelMatrix;
 uniform mat3 uNormalMatrix;
 uniform mat4 uVP;
+uniform mat4 uPrevVP;
 
 out vec3 fsWorldPosition;
 out vec3 fsNormal;
 out vec2 fsTextureCoords;
+out vec4 fsCurrentClipPos;
+out vec4 fsPrevClipPos;
 
 void main()
 {
@@ -18,5 +21,8 @@ void main()
     fsNormal = normalize(uNormalMatrix * aNormal);
     fsTextureCoords = aTextureCoords;
 
-    gl_Position = uVP * vec4(fsWorldPosition, 1.0);
+    fsCurrentClipPos = uVP     * vec4(fsWorldPosition, 1.0);
+    fsPrevClipPos    = uPrevVP * vec4(fsWorldPosition, 1.0);
+
+    gl_Position = fsCurrentClipPos;
 }

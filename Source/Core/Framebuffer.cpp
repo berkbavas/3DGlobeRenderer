@@ -94,6 +94,11 @@ GLuint GlobeRenderer::Framebuffer::GetTexture() const
     return mFramebuffer ? mFramebuffer->texture() : 0;
 }
 
+GLuint GlobeRenderer::Framebuffer::GetTexture(int Attachment) const
+{
+    return GetTextures().at(Attachment);
+}
+
 QList<GLuint> GlobeRenderer::Framebuffer::GetTextures() const
 {
     return mFramebuffer ? mFramebuffer->textures() : QList<GLuint>();

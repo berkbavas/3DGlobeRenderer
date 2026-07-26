@@ -84,6 +84,13 @@ namespace GlobeRenderer
         int mHeight{ 1 };
         float mDevicePixelRatio{ 1.0f };
 
+        // Motion blur
+        bool mMotionBlurEnabled{ false };
+        int  mMotionBlurSamples{ 16 };
+        float mMotionBlurStrength{ 1.0f };
+        QMatrix4x4 mPrevViewProjectionMatrix;
+        QMatrix4x4 mPrevRotationMatrix;
+
         // Managers
         TimeSimulatorPtr mTimeSimulator{ nullptr };
     };

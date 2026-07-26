@@ -25,6 +25,8 @@ uniform vec3 uCameraPosition;
 in vec3 fsWorldPosition;
 in vec3 fsNormal;
 in vec2 fsTextureCoords;
+in vec4 fsCurrentClipPos;
+in vec4 fsPrevClipPos;
 
 vec3 ProcessLighting()
 {
@@ -41,6 +43,7 @@ vec3 ProcessLighting()
 
 layout(location = 0) out vec4 oColor;
 layout(location = 1) out vec4 oGeodeticPosition;
+layout(location = 2) out vec4 oVelocity;
 
 void main()
 {
@@ -52,4 +55,8 @@ void main()
     const float Longitude = 360.0f * (fsTextureCoords.s - 0.5f);
 
     oGeodeticPosition = vec4(Latitude, Longitude, 0.0f, 1.0f);
+
+    const vec2 CurrentNDC = fsCurrentClipPos.xy / fsCurrentClipPos.w;
+    const vec2 PrevNDC    = fsPrevClipPos.xy    / fsPrevClipPos.w;
+    oVelocity = vec4((CurrentNDC - PrevNDC) * 0.5f, 0.0f, 1.0f);
 }

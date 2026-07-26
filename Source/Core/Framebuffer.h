@@ -27,6 +27,7 @@ namespace GlobeRenderer
         QOpenGLFramebufferObject* GetFramebufferObject() const;
         const QOpenGLFramebufferObjectFormat& GetFramebufferFormat() const;
         GLuint GetTexture() const;
+        GLuint GetTexture(int Attachment) const;
         QList<GLuint> GetTextures() const;
         GLuint GetHandle() const;
         int GetWidth() const;

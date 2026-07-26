@@ -62,12 +62,12 @@ void GlobeRenderer::Renderer::Initialize()
     mFramebufferFormats[Multisample].setSamples(8);
     mFramebufferFormats[Multisample].setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
     mFramebufferFormats[Multisample].setInternalTextureFormat(GL_RGBA32F);
-    mExtraColorAttachments[Multisample] = { GL_RGBA32F };
+    mExtraColorAttachments[Multisample] = { GL_RGBA32F, GL_RG16F }; // attachment1=geodetic, attachment2=velocity
 
     mFramebufferFormats[Singlesample].setSamples(0);
     mFramebufferFormats[Singlesample].setAttachment(QOpenGLFramebufferObject::Attachment::Depth);
     mFramebufferFormats[Singlesample].setInternalTextureFormat(GL_RGBA32F);
-    mExtraColorAttachments[Singlesample] = { GL_RGBA32F };
+    mExtraColorAttachments[Singlesample] = { GL_RGBA32F, GL_RG16F }; // attachment1=geodetic, attachment2=velocity
 
     for (const auto &[Type, Format] : mFramebufferFormats)
     {
@@ -122,6 +122,7 @@ void GlobeRenderer::Renderer::Render(float Ifps)
     mFramebuffers[Multisample]->BlitDepthTo(mFramebuffers[Singlesample].get());
     mFramebuffers[Multisample]->BlitColorBufferTo(mFramebuffers[Singlesample].get(), GL_COLOR_ATTACHMENT0);
     mFramebuffers[Multisample]->BlitColorBufferTo(mFramebuffers[Singlesample].get(), GL_COLOR_ATTACHMENT1);
+    mFramebuffers[Multisample]->BlitColorBufferTo(mFramebuffers[Singlesample].get(), GL_COLOR_ATTACHMENT2);
 
     QOpenGLFramebufferObject::bindDefault();
     glViewport(0, 0, mWidth * mDevicePixelRatio, mHeight * mDevicePixelRatio);
@@ -129,11 +130,19 @@ void GlobeRenderer::Renderer::Render(float Ifps)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     mScreenShader->Bind();
-    mScreenShader->SetSampler("uColorTexture", 0, mFramebuffers[Singlesample]->GetTexture(), GL_TEXTURE_2D);
+    mScreenShader->SetSampler("uColorTexture", 0, mFramebuffers[Singlesample]->GetTexture(0), GL_TEXTURE_2D);
+    mScreenShader->SetSampler("uVelocityTexture", 1, mFramebuffers[Singlesample]->GetTexture(2), GL_TEXTURE_2D);
+    mScreenShader->SetUniform("uMotionBlurEnabled", static_cast<int>(mMotionBlurEnabled));
+    mScreenShader->SetUniform("uMotionBlurSamples", mMotionBlurSamples);
+    mScreenShader->SetUniform("uMotionBlurStrength", mMotionBlurStrength);
     mQuad->Render();
     mScreenShader->Unbind();
 
     RenderImGui();
+
+    // Save current matrices for next frame's velocity computation
+    mPrevViewProjectionMatrix = mCamera->GetViewProjectionMatrix();
+    mPrevRotationMatrix = mCamera->GetRotationMatrix();
 }
 
 void GlobeRenderer::Renderer::OnKeyPressed(QKeyEvent *pEvent)
@@ -256,6 +265,7 @@ void GlobeRenderer::Renderer::RenderSpace()
 {
     mSpaceShader->Bind();
     mSpaceShader->SetUniform("uRotation", mCamera->GetRotationMatrix());
+    mSpaceShader->SetUniform("uPrevRotation", mPrevRotationMatrix);
     mSpaceShader->SetUniform("uProjection", mCamera->GetProjectionMatrix());
     mSpace->Render(mSpaceShader.get());
     mSpaceShader->Unbind();
@@ -267,6 +277,7 @@ void GlobeRenderer::Renderer::RenderGlobe()
     mGlobeShader->SetUniform("uModelMatrix", mGlobe->GetTransformation());
     mGlobeShader->SetUniform("uNormalMatrix", mGlobe->GetTransformation().normalMatrix());
     mGlobeShader->SetUniform("uVP", mCamera->GetViewProjectionMatrix());
+    mGlobeShader->SetUniform("uPrevVP", mPrevViewProjectionMatrix);
     mGlobeShader->SetUniform("uGlobe.Ambient", mGlobe->GetAmbient());
     mGlobeShader->SetUniform("uGlobe.Diffuse", mGlobe->GetDiffuse());
     mGlobeShader->SetUniform("uGlobe.Specular", mGlobe->GetSpecular());
@@ -358,6 +369,16 @@ void GlobeRenderer::Renderer::RenderImGui()
             {
                 mTimeSimulator->ResetToCurrentTime();
             }
+        }
+    }
+
+    if (ImGui::CollapsingHeader("Motion Blur"))
+    {
+        ImGui::Checkbox("Enabled##MotionBlur", &mMotionBlurEnabled);
+        if (mMotionBlurEnabled)
+        {
+            ImGui::SliderInt("Samples##MotionBlur", &mMotionBlurSamples, 2, 64);
+            ImGui::SliderFloat("Strength##MotionBlur", &mMotionBlurStrength, 0.0f, 4.0f, "%.2f");
         }
     }
 
