@@ -23,7 +23,6 @@ namespace GlobeRenderer
 
       private:
         void ClampAngles();
-        bool ShouldIgnoreEvents() const;
         void HandleZoom(float Ifps);
         void HandleRotation(float Ifps);
         void HandleTranslation(float Ifps);

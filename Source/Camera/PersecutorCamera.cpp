@@ -6,11 +6,6 @@
 
 bool GlobeRenderer::PersecutorCamera::OnMousePressed(QMouseEvent* pEvent)
 {
-    if (ShouldIgnoreEvents())
-    {
-        return false;
-    }
-
     bool Consumed = false;
 
     if (pEvent->buttons().testFlag(Qt::MiddleButton))
@@ -32,11 +27,6 @@ bool GlobeRenderer::PersecutorCamera::OnMousePressed(QMouseEvent* pEvent)
 
 bool GlobeRenderer::PersecutorCamera::OnMouseReleased(QMouseEvent* pEvent)
 {
-    if (ShouldIgnoreEvents())
-    {
-        return false;
-    }
-
     mMouse.SetButtonPressed(pEvent->button(), false);
 
     return false;
@@ -44,11 +34,6 @@ bool GlobeRenderer::PersecutorCamera::OnMouseReleased(QMouseEvent* pEvent)
 
 bool GlobeRenderer::PersecutorCamera::OnMouseMoved(QMouseEvent* pEvent)
 {
-    if (ShouldIgnoreEvents())
-    {
-        return false;
-    }
-
     bool Consumed = false;
 
     if (mMouse.IsButtonPressed(Qt::MiddleButton))
@@ -76,11 +61,6 @@ bool GlobeRenderer::PersecutorCamera::OnMouseMoved(QMouseEvent* pEvent)
 
 bool GlobeRenderer::PersecutorCamera::OnWheelMoved(QWheelEvent* pEvent)
 {
-    if (ShouldIgnoreEvents())
-    {
-        return false;
-    }
-
     if (pEvent->angleDelta().y() < 0)
     {
         mDistanceBuffer += mZoomStep;
@@ -210,9 +190,4 @@ void GlobeRenderer::PersecutorCamera::ClampAngles()
     Math::AddIfGreater(mYaw, 360.0f, -360.0f);
     Math::AddIfLess(mPitch, 0.0f, 360.0f);
     Math::AddIfGreater(mPitch, 360.0f, -360.0f);
-}
-
-bool GlobeRenderer::PersecutorCamera::ShouldIgnoreEvents() const
-{
-    return false;
 }

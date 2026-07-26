@@ -15,7 +15,7 @@ namespace GlobeRenderer
     class Shader : public QOpenGLExtraFunctions
     {
         using Callback = std::function<void(QOpenGLContext*, QOpenGLShaderProgram*)>;
-        static constexpr int MINIMUM_VALID_LOCATION = 0; // Minimum valid uniform location (0 or higher). Negative values indicate an invalid location.
+        static constexpr int MINIMUM_VALID_LOCATION{ 0 }; // Minimum valid uniform location (0 or higher). Negative values indicate an invalid location.
 
       public:
         explicit Shader(const QString& Name);
@@ -64,7 +64,7 @@ namespace GlobeRenderer
         {
             const auto Location = mProgram->uniformLocation(Name);
 
-            if (0 <= Location)
+            if (MINIMUM_VALID_LOCATION <= Location)
             {
                 mProgram->setUniformValueArray(Location, Values, Count, TupleSize);
             }
