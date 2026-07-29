@@ -13,10 +13,6 @@ GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& Path)
 {
     LOG_DEBUG("TextureLoader::LoadTexture2D: Loading texture at {}", Path.toStdString());
 
-    GLuint TextureId;
-    glGenTextures(1, &TextureId);
-    glBindTexture(GL_TEXTURE_2D, TextureId);
-
     const auto Image = QImage(Path);
 
     if (Image.isNull())
@@ -25,6 +21,10 @@ GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& Path)
     }
 
     const auto ConvertedImage = Image.convertToFormat(QImage::Format_RGBA8888);
+
+    GLuint TextureId;
+    glGenTextures(1, &TextureId);
+    glBindTexture(GL_TEXTURE_2D, TextureId);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ConvertedImage.width(), ConvertedImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, ConvertedImage.bits());
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -40,10 +40,6 @@ GLuint GlobeRenderer::TextureLoader::LoadTexture2D(const QString& Path)
 
 GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& Folder, const QString& Extension)
 {
-    GLuint TextureId;
-    glGenTextures(1, &TextureId);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, TextureId);
-
     QStringList Paths;
     Paths << Folder + "/" + "px" + Extension;
     Paths << Folder + "/" + "nx" + Extension;
@@ -60,6 +56,10 @@ GLuint GlobeRenderer::TextureLoader::LoadTextureCubeMap(const QString& Folder, c
     Targets << GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
     Targets << GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
     Targets << GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+
+    GLuint TextureId;
+    glGenTextures(1, &TextureId);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, TextureId);
 
     for (int i = 0; i < 6; i++)
     {

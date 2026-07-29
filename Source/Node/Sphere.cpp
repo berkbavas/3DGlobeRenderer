@@ -75,15 +75,15 @@ void GlobeRenderer::Sphere::CreateGeometry(float Radius, int StackCount, int Sec
     Vertex TempVertex;
 
     // Generate vertices
-    for (int i = 0; i <= StackCount; ++i)
+    for (int I = 0; I <= StackCount; ++I)
     {
-        float StackAngle = M_PI / 2 - i * M_PI / StackCount; // from pi/2 to -pi/2
+        float StackAngle = M_PI / 2 - I * M_PI / StackCount; // from pi/2 to -pi/2
         float xy = Radius * cosf(StackAngle);                // r * cos(u)
         float z = Radius * sinf(StackAngle);                 // r * sin(u)
 
-        for (int j = 0; j <= SectorCount; ++j)
+        for (int J = 0; J <= SectorCount; ++J)
         {
-            float SectorAngle = j * 2 * M_PI / SectorCount; // from 0 to 2pi
+            float SectorAngle = J * 2 * M_PI / SectorCount; // from 0 to 2pi
 
             TempVertex.Position.setX(xy * cosf(SectorAngle)); // x = r * cos(u) * cos(v)
             TempVertex.Position.setY(xy * sinf(SectorAngle)); // y = r * cos(u) * sin(v)
@@ -91,27 +91,27 @@ void GlobeRenderer::Sphere::CreateGeometry(float Radius, int StackCount, int Sec
 
             TempVertex.Normal = TempVertex.Position.normalized();
 
-            TempVertex.TextureCoords.setX(static_cast<float>(j) / SectorCount);
-            TempVertex.TextureCoords.setY(static_cast<float>(i) / StackCount);
+            TempVertex.TextureCoords.setX(static_cast<float>(J) / SectorCount);
+            TempVertex.TextureCoords.setY(static_cast<float>(I) / StackCount);
 
             mVertices.push_back(TempVertex);
         }
     }
 
     // Generate indices
-    for (int i = 0; i < StackCount; ++i)
+    for (int I = 0; I < StackCount; ++I)
     {
-        for (int j = 0; j < SectorCount; ++j)
+        for (int J = 0; J < SectorCount; ++J)
         {
-            const unsigned int First = (i * (SectorCount + 1)) + j;
+            const unsigned int First = (I * (SectorCount + 1)) + J;
             const unsigned int Second = First + SectorCount + 1;
 
-            if (i != 0)
+            if (I != 0)
             {
                 mFaces << Sphere::TriangleFace{ First, Second, First + 1 };
             }
 
-            if (i != (StackCount - 1))
+            if (I != (StackCount - 1))
             {
                 mFaces << Sphere::TriangleFace{ First + 1, Second, Second + 1 };
             }

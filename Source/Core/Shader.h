@@ -33,53 +33,32 @@ namespace GlobeRenderer
         template<typename T>
         void SetUniform(const QString& Name, const T& Value)
         {
-            const auto Location = mProgram->uniformLocation(Name);
-
-            if (MINIMUM_VALID_LOCATION <= Location)
-            {
-                mProgram->setUniformValue(Location, Value);
-            }
-            else
-            {
-                LOG_FATAL("Shader::SetUniform: [{}] Uniform location '{}' could not be found.", mName.toStdString(), Name.toStdString());
-            }
+            const auto Location = GetUniformLocation(Name);
+            mProgram->setUniformValue(Location, Value);
         }
 
         template<typename T>
         void SetUniformArray(const QString& Name, const QVector<T>& Values)
         {
-            const auto Location = mProgram->uniformLocation(Name);
-
-            if (MINIMUM_VALID_LOCATION <= Location)
-            {
-                mProgram->setUniformValueArray(Location, Values.constData(), Values.size());
-            }
-            else
-            {
-                LOG_FATAL("Shader::SetUniformArray: [{}] Uniform location '{}' could not be found.", mName.toStdString(), Name.toStdString());
-            }
+            const auto Location = GetUniformLocation(Name);
+            mProgram->setUniformValueArray(Location, Values.constData(), Values.size());
         }
 
         void SetUniformArray(const QString& Name, const GLfloat* Values, int Count, int TupleSize)
         {
-            const auto Location = mProgram->uniformLocation(Name);
-
-            if (MINIMUM_VALID_LOCATION <= Location)
-            {
-                mProgram->setUniformValueArray(Location, Values, Count, TupleSize);
-            }
-            else
-            {
-                LOG_FATAL("Shader::SetUniformValueArray[{}]: Uniform location '{}' could not be found.", mName.toStdString(), Name.toStdString());
-            }
+            const auto Location = GetUniformLocation(Name);
+            mProgram->setUniformValueArray(Location, Values, Count, TupleSize);
         }
 
         void SetSampler(const QString& Name, GLuint Unit, GLuint TextureId, GLuint Target = GL_TEXTURE_2D);
 
       private:
+        int GetUniformLocation(const QString& Name);
+
         QString mName;
         std::unique_ptr<QOpenGLShaderProgram> mProgram;
-        std::map<QOpenGLShader::ShaderTypeBit, QString> mPaths;
+        std::unordered_map<QOpenGLShader::ShaderTypeBit, QString> mPaths;
+        std::unordered_map<QString, int> mUniformLocations; // Cache for uniform locations to avoid repeated lookups.
         Callback mCallback{ nullptr };
     };
 

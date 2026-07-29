@@ -108,3 +108,20 @@ void GlobeRenderer::Shader::SetSampler(const QString& Name, GLuint Unit, GLuint 
     glActiveTexture(GL_TEXTURE0 + Unit);
     glBindTexture(Target, TextureId);
 }
+
+int GlobeRenderer::Shader::GetUniformLocation(const QString& Name)
+{
+    if (mUniformLocations.find(Name) == mUniformLocations.end())
+    {
+        const auto Location = mProgram->uniformLocation(Name);
+
+        if (Location < MINIMUM_VALID_LOCATION)
+        {
+            GR_EXIT_FAILURE("Shader::GetUniformLocation[{}]: Uniform location '{}' could not be found.", mName.toStdString(), Name.toStdString());
+        }
+
+        mUniformLocations[Name] = Location;
+    }
+
+    return mUniformLocations[Name];
+}
